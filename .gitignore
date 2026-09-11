@@ -3,3 +3,7 @@
 old_tests/
 *.egg-info/
 build/
+.venv/
+.pytest_cache/
+dist/
+benchmark-results/

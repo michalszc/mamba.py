@@ -2,6 +2,7 @@
 import gc
 
 import torch
+import pytest
 
 from mambapy.mamba import Mamba, MambaConfig
 from mambapy.checkpointing import checkpointed_sequence
@@ -82,10 +83,8 @@ def test_checkpointing_reduces_memory():
     # checkpointed (10 x 100) must use at least 5x less peak memory than full (1 x 1000)
     if torch.cuda.is_available():
         device = torch.device('cuda')
-    elif torch.backends.mps.is_available():
-        device = torch.device('mps')
     else:
-        return # skip, no GPU
+        pytest.skip('This peak-allocation assertion requires CUDA peak counters; MPS end-of-run allocations are not a peak measurement.')
 
     B, L, D = 4, 1000, 128
     n_layers = 8
