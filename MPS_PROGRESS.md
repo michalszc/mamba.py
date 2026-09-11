@@ -31,3 +31,9 @@ Raw samples and allocation snapshots are in ignored `benchmark-results/` files. 
 Added explicit backend configuration and a compact reference scan using the existing `pscan`. Both output and final state are differentiable. Checkpoint keys remain compatible. Metal dispatch deliberately stays disabled until its backward is validated.
 
 Validation: 17 passed, 1 CUDA-only skip across scan-contract, baseline, chunk-equivalence and checkpointing tests. Includes double-precision gradcheck and CPU/MPS model gradients.
+
+## Step 3 — FP32 Metal forward
+
+Three kernels calculate chunk summaries, boundary states and outputs. No full-sequence state tensor is allocated. State capacities are bounded power-of-two specializations; explicit native support is 1..128 states, with validated rejection outside that range.
+
+Validation: 35 GPU cases passed for chunk sizes 64/128/256, lengths through 8192, states through 128, views and storage offsets. A long-sequence failure exposed loss of accuracy for near-unit decay factors. Reusing PyTorch's existing Metal `expm1f` helper and accumulating chunk log-decays fixed it without relaxing tolerances (rtol=1e-4, atol=1e-5), checked against a CPU double-precision reference.
