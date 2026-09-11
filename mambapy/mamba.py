@@ -123,6 +123,10 @@ class Mamba(nn.Module):
 
         # same as chunk_step, but with activation checkpointing for memory-efficient BPTT
 
+        if segment_size <= 0:
+            raise ValueError('segment_size must be positive')
+        if x_seq.size(1) == 0:
+            return x_seq.clone(), list(caches)
         from mambapy.checkpointing import checkpointed_sequence
 
         L = x_seq.size(1)
@@ -398,6 +402,10 @@ class MambaBlock(nn.Module):
         # y : (B, D)
         # cache : (h, inputs)
         
+        validate_config(self.config.backend,self.config.pscan,self.config.use_cuda)
+        if self.config.backend == 'mps' or (x.device.type == 'mps' and self.config.backend == 'auto' and self.config.pscan and not self.config.use_cuda):
+            y, updated = self.chunk_step(x.unsqueeze(1),cache)
+            return y.squeeze(1), updated
         h, inputs = cache
         
         xz = self.in_proj(x) # (B, 2*ED)
@@ -417,7 +425,7 @@ class MambaBlock(nn.Module):
         output = self.out_proj(output) # (B, D)
 
         # prepare cache for next call
-        inputs = torch.cat([inputs[:, :, 1:], x_cache], dim=2) # (B, ED, d_conv-1)
+        inputs = torch.cat([inputs[:, :, 1:], x_cache], dim=2) if self.config.d_conv>1 else inputs[:,:,:0]
         cache = (h, inputs)
         
         return output, cache
@@ -464,12 +472,18 @@ class MambaBlock(nn.Module):
         # cache : (h_T, inputs_last)
         B, L, _ = x_seq.shape
         h0, inputs = cache
+        validate_config(self.config.backend,self.config.pscan,self.config.use_cuda)
+        if L == 0:
+            return x_seq.clone(),cache
         
         xz = self.in_proj(x_seq) # (B, L, 2*ED)
         x_pre, z = xz.chunk(2, dim=-1) # (B, L, ED), (B, L, ED)
 
         k = max(self.config.d_conv - 1, 0)
-        if k > 0:
+        from mambapy.mps.conv import eligible,conv_silu
+        if eligible(x_pre,self.config):
+            x_act = conv_silu(x_pre,self.conv1d.weight,self.conv1d.bias,inputs)
+        elif k > 0:
             x_cat = torch.cat([inputs, x_pre.transpose(1, 2)], dim=2) # (B, ED, k+L)
             x_conv_full = self.conv1d(x_cat) # (B, ED, k+L)
             x_conv = x_conv_full[:, :, k:k+L]
@@ -478,22 +492,21 @@ class MambaBlock(nn.Module):
             x_act = self.conv1d(x_pre.transpose(1, 2))[:, :, :L]
             x_act = F.silu(x_act.transpose(1, 2)) # (B, L, ED)
 
-        y_seq, hs = self.ssm_chunk_step(x_act, h0=h0)
+        y_seq, h_T = self.ssm_chunk_step(x_act, h0=h0, return_states=False)
 
         z = F.silu(z) # (B, L, ED)
         y_seq = self.out_proj(y_seq * z) # (B, L, D)
 
-        h_T = hs[:, -1] # (B, ED, N)
         if k > 0:
             pre_full = torch.cat([inputs.transpose(1, 2), x_pre], dim=1) # (B, k+L, ED)
             inputs_last = pre_full[:, -k:, :].transpose(1, 2).contiguous() # (B, ED, k)
         else:
-            inputs_last = torch.zeros(B, self.config.d_inner, 0, device=x_seq.device, dtype=x_seq.dtype)
+            inputs_last = inputs[:,:,:0]
         
         return y_seq, (h_T, inputs_last)
     
 
-    def ssm_chunk_step(self, x, h0=None):
+    def ssm_chunk_step(self, x, h0=None, *, return_states=True):
         # x : (B, L, ED)  (after convolution + activation)
         # h0 : (B, ED, N) or None
         #
@@ -508,7 +521,11 @@ class MambaBlock(nn.Module):
         
         delta = self.dt_proj.weight @ delta.transpose(1, 2) # (ED, dt_rank) @ (B, L, dt_rank) -> (B, ED, L)
         delta = delta.transpose(1, 2) # (B, L, ED)
-        delta = F.softplus(delta + self.dt_proj.bias) # (B, L, ED)
+        delta = F.softplus(delta + self.dt_proj.bias) # (B, L, ED)
+
+        if not return_states:
+            backend = self.config.backend if self.config.pscan else 'torch'
+            return backend_scan(x,delta,A,B,C,D,h0,backend=backend)
         
         deltaA = torch.exp(delta.unsqueeze(-1) * A) # (B, L, ED, N)
         deltaB = delta.unsqueeze(-1) * B.unsqueeze(2) # (B, L, ED, N)

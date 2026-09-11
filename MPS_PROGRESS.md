@@ -49,3 +49,9 @@ Validation: 62 passed, 1 CUDA-only skip. Includes all input gradients against do
 Added convolution/SiLU forward and backward with optional bias, filter widths 1/4/9, differentiable history and views. Validation: 65 scan/convolution/model cases passed.
 
 `python -m benchmarks.conv` compared identical complete MPS blocks with only convolution changed (B=2,D=128). At L=64, forward improved 1.881 -> 1.766 ms and forward/backward 2.445 -> 1.763 ms. At L=512, results were essentially tied; at L=2048 native backward regressed 9.179 -> 9.947 ms. Consequently automatic fused-convolution selection is limited to lengths <=128; longer sequences retain PyTorch convolution on MPS. This is a measured dispatch decision, not an unsupported-operator CPU fallback.
+
+## Step 6 — stateful execution
+
+Chunk execution requests only final state, reusing `ssm_chunk_step` with an optional `return_states=False`; the default still returns every state for compatibility. Native step execution shares the same stateful path. The existing `checkpointed_sequence` helper is reused. Fixed empty convolution history handling for width one and added positive segment-size validation.
+
+Validation covers nonzero initial states, losses on final states, all parameter/input/cache gradients, uneven chunks, checkpointed chunks and individual token steps. The existing cache list is intentionally updated by the model API; tests retain separate references to original states when checking gradients.
