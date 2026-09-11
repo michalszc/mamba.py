@@ -37,3 +37,9 @@ Validation: 17 passed, 1 CUDA-only skip across scan-contract, baseline, chunk-eq
 Three kernels calculate chunk summaries, boundary states and outputs. No full-sequence state tensor is allocated. State capacities are bounded power-of-two specializations; explicit native support is 1..128 states, with validated rejection outside that range.
 
 Validation: 35 GPU cases passed for chunk sizes 64/128/256, lengths through 8192, states through 128, views and storage offsets. A long-sequence failure exposed loss of accuracy for near-unit decay factors. Reusing PyTorch's existing Metal `expm1f` helper and accumulating chunk log-decays fixed it without relaxing tolerances (rtol=1e-4, atol=1e-5), checked against a CPU double-precision reference.
+
+## Step 4 — Metal autograd
+
+Added reverse chunk summaries, boundary adjoints, local state recomputation and gradients for every scan input. Compensated accumulation fixes long-sequence derivative cancellation without changing test tolerances. SIMD state reductions and compact atomic accumulation avoid full-sequence state/gradient intermediates. MPS model dispatch is now enabled for supported FP32 inputs.
+
+Validation: 62 passed, 1 CUDA-only skip. Includes all input gradients against double precision through length 2048, non-power-of-two state dimensions, a 100000-scaled analytical derivative, final-state-only loss, frozen inputs, repeated backward/gradient accumulation, and three complete-model AdamW steps matching the reference. Schema and FakeTensor opchecks passed. PyTorch 2.11's autograd-registration opcheck excludes MPS explicitly; direct numerical gradient tests cover that requirement instead.

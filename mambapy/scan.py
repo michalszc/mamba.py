@@ -39,5 +39,9 @@ def selective_scan(x, delta, A, B, C, D, initial_state=None, *, backend='auto'):
     if backend == 'mps':
         if x.device.type != 'mps':
             raise ValueError('backend=mps requires MPS inputs')
-        raise RuntimeError('The MPS scan backend is not enabled yet')
+    native = (x.device.type == 'mps' and x.dtype == torch.float32 and
+              x.size(1) > 0 and 1 <= A.size(1) <= 128 and hasattr(torch.mps,'compile_shader'))
+    if backend == 'mps' or (backend == 'auto' and native):
+        from mambapy.mps.scan import scan
+        return scan(x,delta,A,B,C,D,initial_state)
     return reference_scan(x, delta, A, B, C, D, initial_state)

@@ -48,4 +48,80 @@ def forward_raw(x, delta, A, B, C, D, initial_state, chunk_size=128):
                    threads=batch*width*state)
     lib.output_scan(x,delta,A,B,C,D,states,y,length,width,state,chunks,chunk_size,
                     threads=batch*chunks*width)
-    return y, states[:,-1].contiguous(), states
+    return y, states[:,-1].clone(), states
+
+
+def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
+    x,delta,A,B,C,D,gy,gh = [t.contiguous() for t in (x,delta,A,B,C,D,gy,gh)]
+    batch,length,width = x.shape
+    state = A.size(1)
+    chunks = states.size(1)-1
+    lib = shaders(1 << (state-1).bit_length())
+    alpha = x.new_empty(batch,chunks,width,state)
+    beta = torch.empty_like(alpha)
+    adjoints = torch.empty_like(states)
+    gx = gy*D
+    gdt = torch.zeros_like(delta)
+    gA = torch.empty_like(alpha)
+    gB, gC = torch.zeros_like(B), torch.zeros_like(C)
+    lib.reverse_summaries(delta,A,C,gy,alpha,beta,length,width,state,chunks,chunk_size,
+                          threads=alpha.numel())
+    lib.reverse_boundaries(alpha,beta,gh,adjoints,width,state,chunks,
+                           threads=batch*width*state)
+    lib.scan_gradients(x,delta,A,B,C,states,adjoints,gy,gx,gdt,gA,gB,gC,
+                       length,width,state,chunks,chunk_size,
+                       threads=batch*chunks*width*(1 << (state-1).bit_length()))
+    return gx,gdt,gA.sum((0,1)),gB,gC,(gy*x).sum((0,1)),adjoints[:,0].clone()
+
+
+@torch.library.custom_op('mambapy_mps::scan_backward', mutates_args=())
+def _backward_op(x: torch.Tensor, delta: torch.Tensor, A: torch.Tensor,
+                 B: torch.Tensor, C: torch.Tensor, D: torch.Tensor,
+                 states: torch.Tensor, gy: torch.Tensor, gh: torch.Tensor,
+                 chunk_size: int) -> list[torch.Tensor]:
+    return list(backward_raw(x,delta,A,B,C,D,states,gy,gh,chunk_size))
+
+
+@_backward_op.register_fake
+def _backward_fake(x,delta,A,B,C,D,states,gy,gh,chunk_size):
+    return [torch.empty_like(t) for t in (x,delta,A,B,C,D,gh)]
+
+
+@torch.library.custom_op('mambapy_mps::scan', mutates_args=())
+def _scan_op(x: torch.Tensor, delta: torch.Tensor, A: torch.Tensor,
+             B: torch.Tensor, C: torch.Tensor, D: torch.Tensor,
+             initial_state: torch.Tensor, chunk_size: int) -> tuple[torch.Tensor,torch.Tensor,torch.Tensor]:
+    return forward_raw(x,delta,A,B,C,D,initial_state,chunk_size)
+
+
+@_scan_op.register_fake
+def _scan_fake(x,delta,A,B,C,D,initial_state,chunk_size):
+    chunks = (x.size(1)+chunk_size-1)//chunk_size
+    return (torch.empty_like(x),torch.empty_like(initial_state),
+            x.new_empty(x.size(0),chunks+1,x.size(2),A.size(1)))
+
+
+def _setup_context(ctx,inputs,output):
+    x,delta,A,B,C,D,h,chunk = inputs
+    ctx.save_for_backward(x,delta,A,B,C,D,output[2])
+    ctx.chunk = chunk
+    ctx.mark_non_differentiable(output[2])
+
+
+def _backward(ctx,gy,gh,_):
+    x,delta,A,B,C,D,states = ctx.saved_tensors
+    if gy is None:
+        gy = torch.zeros_like(x)
+    if gh is None:
+        gh = torch.zeros_like(states[:,0])
+    return (*_backward_op(x,delta,A,B,C,D,states,gy,gh,ctx.chunk),None)
+
+
+_scan_op.register_autograd(_backward,setup_context=_setup_context)
+
+
+def scan(x,delta,A,B,C,D,initial_state=None,chunk_size=128):
+    if initial_state is None:
+        initial_state = x.new_zeros(x.size(0),x.size(2),A.size(1))
+    y,h,_ = _scan_op(x,delta,A,B,C,D,initial_state,chunk_size)
+    return y,h
