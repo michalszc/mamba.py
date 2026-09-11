@@ -25,3 +25,9 @@ Single residual block, FP32, state size 16. Three warmups; five individually syn
 | 1 | 2048 | 384 | 34.670 | 87.138 | 87.560 |
 
 Raw samples and allocation snapshots are in ignored `benchmark-results/` files. Snapshot counters are not peak measurements. These timings use different batching from the prior PR audit and must not be treated as a direct controlled comparison with that report.
+
+## Step 2 — backend contract
+
+Added explicit backend configuration and a compact reference scan using the existing `pscan`. Both output and final state are differentiable. Checkpoint keys remain compatible. Metal dispatch deliberately stays disabled until its backward is validated.
+
+Validation: 17 passed, 1 CUDA-only skip across scan-contract, baseline, chunk-equivalence and checkpointing tests. Includes double-precision gradcheck and CPU/MPS model gradients.

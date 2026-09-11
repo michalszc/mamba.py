@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from mambapy.pscan import pscan
+from mambapy.scan import selective_scan as backend_scan, validate_config
 
 """
 
@@ -55,8 +56,10 @@ class MambaConfig:
 
     pscan: bool = True # use parallel scan mode or sequential mode when training
     use_cuda: bool = False # use official CUDA implementation when training (not compatible with (b)float16)
+    backend: str = 'auto' # auto, torch, or mps; checkpoint parameter names are unchanged
 
     def __post_init__(self):
+        validate_config(self.backend, self.pscan, self.use_cuda)
         self.d_inner = self.expand_factor * self.d_model # E*D = ED in comments
 
         if self.dt_rank == 'auto':
@@ -286,6 +289,7 @@ class MambaBlock(nn.Module):
 
         # y : (B, L, ED)
 
+        validate_config(self.config.backend, self.config.pscan, self.config.use_cuda)
         A = -torch.exp(self.A_log.float()) # (ED, N)
         D = self.D.float()
 
@@ -329,18 +333,7 @@ class MambaBlock(nn.Module):
 
         # y : (B, L, ED)
 
-        deltaA = torch.exp(delta.unsqueeze(-1) * A) # (B, L, ED, N)
-        deltaB = delta.unsqueeze(-1) * B.unsqueeze(2) # (B, L, ED, N)
-
-        BX = deltaB * (x.unsqueeze(-1)) # (B, L, ED, N)
-        
-        hs = pscan(deltaA, BX)
-
-        y = (hs @ C.unsqueeze(-1)).squeeze(3) # (B, L, ED, N) @ (B, L, N, 1) -> (B, L, ED, 1)
-
-        y = y + D * x
-
-        return y
+        return backend_scan(x, delta, A, B, C, D, backend=self.config.backend)[0]
     
     def selective_scan_seq(self, x, delta, A, B, C, D):
         # x : (B, L, ED)
@@ -549,4 +542,3 @@ class RMSNorm(nn.Module):
             return output * self.weight
         else:
             return output
-    
