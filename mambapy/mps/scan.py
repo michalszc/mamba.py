@@ -4,10 +4,11 @@ from pathlib import Path
 import torch
 
 
-@lru_cache(maxsize=8)
-def shaders(capacity):
+@lru_cache(maxsize=24)
+def shaders(capacity,dtype=torch.float32):
     source = Path(__file__).with_suffix('.metal').read_text()
-    return torch.mps.compile_shader(source.replace('STATE_CAPACITY', str(capacity)))
+    scalar={torch.float32:'float',torch.float16:'half',torch.bfloat16:'bfloat'}[dtype]
+    return torch.mps.compile_shader(source.replace('STATE_CAPACITY', str(capacity)).replace('SCALAR_TYPE',scalar))
 
 
 def validate(x, delta, A, B, C, D, initial_state):
@@ -22,8 +23,10 @@ def validate(x, delta, A, B, C, D, initial_state):
     for tensor in (x,delta,A,B,C,D,initial_state):
         if tensor.device != x.device or tensor.device.type != 'mps':
             raise ValueError('All scan tensors must be on the same MPS device')
-        if tensor.dtype != torch.float32:
-            raise TypeError('The FP32 scan requires float32 tensors')
+    if x.dtype not in (torch.float32,torch.float16,torch.bfloat16) or B.dtype!=x.dtype or C.dtype!=x.dtype:
+        raise TypeError('Scan activations and B/C must share a supported floating dtype')
+    if any(t.dtype!=torch.float32 for t in (delta,A,D,initial_state)):
+        raise TypeError('Scan delta, A, D and recurrent state require float32')
     if not (batch > 0 and length > 0 and width > 0 and 1 <= state <= 128):
         raise ValueError('Positive dimensions and state size 1..128 required')
 
@@ -37,10 +40,10 @@ def forward_raw(x, delta, A, B, C, D, initial_state, chunk_size=128):
     batch,length,width = x.shape
     state = A.size(1)
     chunks = (length+chunk_size-1)//chunk_size
-    lib = shaders(1 << (state-1).bit_length())
-    alpha = x.new_empty(batch,chunks,width,state)
+    lib = shaders(1 << (state-1).bit_length(),x.dtype)
+    alpha = A.new_empty(batch,chunks,width,state)
     beta = torch.empty_like(alpha)
-    states = x.new_empty(batch,chunks+1,width,state)
+    states = A.new_empty(batch,chunks+1,width,state)
     y = torch.empty_like(x)
     lib.summaries(x,delta,A,B,alpha,beta,length,width,state,chunks,chunk_size,
                   threads=alpha.numel())
@@ -56,14 +59,14 @@ def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
     batch,length,width = x.shape
     state = A.size(1)
     chunks = states.size(1)-1
-    lib = shaders(1 << (state-1).bit_length())
-    alpha = x.new_empty(batch,chunks,width,state)
+    lib = shaders(1 << (state-1).bit_length(),x.dtype)
+    alpha = A.new_empty(batch,chunks,width,state)
     beta = torch.empty_like(alpha)
     adjoints = torch.empty_like(states)
     gx = gy*D
     gdt = torch.zeros_like(delta)
     gA = torch.empty_like(alpha)
-    gB, gC = torch.zeros_like(B), torch.zeros_like(C)
+    gB, gC = torch.zeros_like(B,dtype=torch.float32), torch.zeros_like(C,dtype=torch.float32)
     lib.reverse_summaries(delta,A,C,gy,alpha,beta,length,width,state,chunks,chunk_size,
                           threads=alpha.numel())
     lib.reverse_boundaries(alpha,beta,gh,adjoints,width,state,chunks,
@@ -71,7 +74,7 @@ def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
     lib.scan_gradients(x,delta,A,B,C,states,adjoints,gy,gx,gdt,gA,gB,gC,
                        length,width,state,chunks,chunk_size,
                        threads=batch*chunks*width*(1 << (state-1).bit_length()))
-    return gx,gdt,gA.sum((0,1)),gB,gC,(gy*x).sum((0,1)),adjoints[:,0].clone()
+    return gx.to(x.dtype),gdt,gA.sum((0,1)),gB.to(B.dtype),gC.to(C.dtype),(gy*x.float()).sum((0,1)),adjoints[:,0].clone()
 
 
 @torch.library.custom_op('mambapy_mps::scan_backward', mutates_args=())
@@ -98,7 +101,7 @@ def _scan_op(x: torch.Tensor, delta: torch.Tensor, A: torch.Tensor,
 def _scan_fake(x,delta,A,B,C,D,initial_state,chunk_size):
     chunks = (x.size(1)+chunk_size-1)//chunk_size
     return (torch.empty_like(x),torch.empty_like(initial_state),
-            x.new_empty(x.size(0),chunks+1,x.size(2),A.size(1)))
+            A.new_empty(x.size(0),chunks+1,x.size(2),A.size(1)))
 
 
 def _setup_context(ctx,inputs,output):
@@ -114,7 +117,7 @@ def _backward(ctx,gy,gh,_):
         gy = torch.zeros_like(x)
     if gh is None:
         gh = torch.zeros_like(states[:,0])
-    return (*_backward_op(x,delta,A,B,C,D,states,gy,gh,ctx.chunk),None)
+    return (*_backward_op(x,delta,A,B,C,D,states,gy.float(),gh.float(),ctx.chunk),None)
 
 
 _scan_op.register_autograd(_backward,setup_context=_setup_context)
@@ -122,6 +125,6 @@ _scan_op.register_autograd(_backward,setup_context=_setup_context)
 
 def scan(x,delta,A,B,C,D,initial_state=None,chunk_size=128):
     if initial_state is None:
-        initial_state = x.new_zeros(x.size(0),x.size(2),A.size(1))
-    y,h,_ = _scan_op(x,delta,A,B,C,D,initial_state,chunk_size)
+        initial_state = x.new_zeros(x.size(0),x.size(2),A.size(1),dtype=torch.float32)
+    y,h,_ = _scan_op(x,delta.float(),A.float(),B.to(x.dtype),C.to(x.dtype),D.float(),initial_state.float(),chunk_size)
     return y,h

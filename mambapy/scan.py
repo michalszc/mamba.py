@@ -25,13 +25,16 @@ def reference_scan(x, delta, A, B, C, D, initial_state=None):
     if x.size(1) == 0:
         h = initial_state if initial_state is not None else x.new_zeros(x.size(0), x.size(2), A.size(1))
         return x.clone(), h.clone()
+    output_dtype=x.dtype
+    compute_dtype=torch.promote_types(x.dtype,A.dtype)
+    x,delta,A,B,C,D=[t.to(compute_dtype) for t in (x,delta,A,B,C,D)]
     a = torch.exp(delta.unsqueeze(-1) * A)
     bx = delta.unsqueeze(-1) * B.unsqueeze(2) * x.unsqueeze(-1)
     if initial_state is not None:
         bx = torch.cat((bx[:, :1] + a[:, :1] * initial_state.unsqueeze(1), bx[:, 1:]), dim=1)
     states = pscan(a, bx)
     y = (states @ C.unsqueeze(-1)).squeeze(-1) + D * x
-    return y, states[:, -1]
+    return y.to(output_dtype), states[:, -1]
 
 
 def selective_scan(x, delta, A, B, C, D, initial_state=None, *, backend='auto'):
@@ -39,7 +42,7 @@ def selective_scan(x, delta, A, B, C, D, initial_state=None, *, backend='auto'):
     if backend == 'mps':
         if x.device.type != 'mps':
             raise ValueError('backend=mps requires MPS inputs')
-    native = (x.device.type == 'mps' and x.dtype == torch.float32 and
+    native = (x.device.type == 'mps' and x.dtype in (torch.float32,torch.float16,torch.bfloat16) and
               x.size(1) > 0 and 1 <= A.size(1) <= 128 and hasattr(torch.mps,'compile_shader'))
     if backend == 'mps' or (backend == 'auto' and native):
         from mambapy.mps.scan import scan

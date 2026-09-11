@@ -1,6 +1,7 @@
 #include <metal_stdlib>
 #include <c10/metal/expm1f.h>
 using namespace metal;
+using scalar_t = SCALAR_TYPE;
 
 inline float mamba_decay(float z, float h) {
     return abs(z)<0.1f ? fma(c10::metal::expm1f(z),h,h) : precise::exp(z)*h;
@@ -24,8 +25,8 @@ inline void mamba_advance(thread float& h, thread float& error, float z, float u
 }
 
 // STATE_CAPACITY is a bounded power-of-two specialization, not a sequence shape.
-kernel void summaries(device const float* x, device const float* dt,
-    device const float* A, device const float* B,
+kernel void summaries(device const scalar_t* x, device const float* dt,
+    device const float* A, device const scalar_t* B,
     device float* alpha, device float* beta,
     constant uint& L, constant uint& D, constant uint& N,
     constant uint& K, constant uint& T, uint id [[thread_position_in_grid]]) {
@@ -54,9 +55,9 @@ kernel void boundaries(device const float* alpha, device const float* beta,
     }
 }
 
-kernel void output_scan(device const float* x, device const float* dt,
-    device const float* A, device const float* B, device const float* C,
-    device const float* skip, device const float* states, device float* y,
+kernel void output_scan(device const scalar_t* x, device const float* dt,
+    device const float* A, device const scalar_t* B, device const scalar_t* C,
+    device const float* skip, device const float* states, device scalar_t* y,
     constant uint& L, constant uint& D, constant uint& N,
     constant uint& K, constant uint& T, uint id [[thread_position_in_grid]]) {
     uint d=id%D, k=(id/D)%K, b=id/(D*K);
@@ -71,12 +72,12 @@ kernel void output_scan(device const float* x, device const float* dt,
             mamba_advance(h[n],errors[n],dt[i]*A[d*N+n],dt[i]*B[(b*L+t)*N+n]*x[i]);
             value+=h[n]*C[(b*L+t)*N+n];
         }
-        y[i]=value;
+        y[i]=scalar_t(value);
     }
 }
 
 kernel void reverse_summaries(device const float* dt, device const float* A,
-    device const float* C, device const float* gy, device float* alpha,
+    device const scalar_t* C, device const float* gy, device float* alpha,
     device float* beta, constant uint& L, constant uint& D, constant uint& N,
     constant uint& K, constant uint& T, uint id [[thread_position_in_grid]]) {
     uint n=id%N, d=(id/N)%D, k=(id/(N*D))%K, b=id/(N*D*K);
@@ -107,8 +108,8 @@ kernel void reverse_boundaries(device const float* alpha, device const float* be
 
 // Each thread recomputes one state coordinate for at most 256 timesteps.
 // Reductions accumulate directly into compact input-shaped gradient buffers.
-kernel void scan_gradients(device const float* x, device const float* dt,
-    device const float* A, device const float* B, device const float* C,
+kernel void scan_gradients(device const scalar_t* x, device const float* dt,
+    device const float* A, device const scalar_t* B, device const scalar_t* C,
     device const float* states, device const float* adjoints, device const float* gy,
     device atomic_float* gx, device atomic_float* gdt, device float* gA,
     device atomic_float* gB, device atomic_float* gC,
@@ -136,7 +137,7 @@ kernel void scan_gradients(device const float* x, device const float* dt,
             float ah=mamba_decay(dt[i]*A[d*N+n],hs[s]);
             ga+=q*ah*dt[i];
             dx=q*dt[i]*B[j];
-            dd=q*fma(A[d*N+n],ah,B[j]*x[i]);
+            dd=q*fma(A[d*N+n],ah,float(B[j])*float(x[i]));
             atomic_fetch_add_explicit(gB+j,q*dt[i]*x[i],memory_order_relaxed);
             atomic_fetch_add_explicit(gC+j,gy[i]*hs[s+1],memory_order_relaxed);
             mamba_advance(q,qerror,dt[i]*A[d*N+n],0.0f);

@@ -61,3 +61,9 @@ Validation covers nonzero initial states, losses on final states, all parameter/
 `LM.generate` now prefills Mamba-1 once and decodes one token at a time using existing core cache APIs. The output token tensor is preallocated and only the last prompt position is projected to vocabulary logits. Sampling options and the input-device return convention remain intact. Zero-token requests return an empty result. Each module's prior train/eval flag is restored even on an exception.
 
 Validation: 13 generation/stateful tests passed on CPU and MPS, including greedy parity against full-history execution, one-token prompts, batch generation, sampling, zero output tokens, invalid arguments, and assertions of one prefill plus exactly N-1 single-token decode calls.
+
+## Step 8 — precision coverage
+
+Added actual half/bfloat Metal buffer variants, with FP32 recurrent states, delta, reductions and gradient accumulation; outputs and input gradients retain their intended dtype. Reference scan and normalization handle mixed precision consistently. Convolution cache inputs follow activation dtype. The existing checkpoint helper now captures and restores autocast settings during backward recomputation, verified by hooks observing projection output dtypes.
+
+Validation: 98 passed, 1 CUDA-only skip. FP16 tolerances are rtol=1e-2/atol=1e-3; BF16 rtol=5e-2/atol=5e-3; FP32 stays rtol=1e-4/atol=1e-5. Tests cover explicit conversion, autocast, optional bias/inner normalization, all model gradients, optimizer steps, cached generation and checkpoint backward outside the autocast context. Autocast AdamW uses FP32 parameters; explicitly low-precision parameters were validated with SGD. The CPU fallback environment flag is unset (PyTorch's default is disabled).

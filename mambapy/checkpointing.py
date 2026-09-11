@@ -36,6 +36,9 @@ class SequenceCheckpoint(torch.autograd.Function):
 
         initial_state_flat = tensors[:num_state_tensors]
         segments = tensors[num_state_tensors:]
+        ctx.device_type=segments[0].device.type
+        ctx.autocast_enabled=torch.is_autocast_enabled(ctx.device_type)
+        ctx.autocast_dtype=torch.get_autocast_dtype(ctx.device_type)
 
         ctx.initial_state = tuple(t.detach() if t is not None else None for t in initial_state_flat)
         ctx.state_requires_grad = [t.requires_grad if t is not None else False for t in initial_state_flat]
@@ -98,7 +101,7 @@ class SequenceCheckpoint(torch.autograd.Function):
             state_at_i = [t.detach().requires_grad_(True) if t is not None else None for t in states.pop(i)]
 
             seg_detached = segments[i].detach().requires_grad_(True)
-            with torch.enable_grad():
+            with torch.enable_grad(), torch.autocast(ctx.device_type,enabled=ctx.autocast_enabled,dtype=ctx.autocast_dtype):
                 state = [
                     tuple(state_at_i[k * ctx.tuple_size : (k + 1) * ctx.tuple_size])
                     for k in range(ctx.n_layers)

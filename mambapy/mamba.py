@@ -318,7 +318,7 @@ class MambaBlock(nn.Module):
         
         else:
             delta = delta.transpose(1, 2)
-            delta = F.softplus(delta + self.dt_proj.bias)
+            delta = F.softplus(delta.float() + self.dt_proj.bias.float()) if delta.dtype in (torch.float16,torch.bfloat16) else F.softplus(delta + self.dt_proj.bias)
 
             if self.config.pscan:
                 y = self.selective_scan(x, delta, A, B, C, D)
@@ -365,11 +365,11 @@ class MambaBlock(nn.Module):
             
         hs = torch.stack(hs, dim=1) # (B, L, ED, N)
 
-        y = (hs @ C.unsqueeze(-1)).squeeze(3) # (B, L, ED, N) @ (B, L, N, 1) -> (B, L, ED, 1)
+        y = (hs @ C.to(hs.dtype).unsqueeze(-1)).squeeze(3)
 
         y = y + D * x
 
-        return y
+        return y.to(x.dtype)
     
     # -------------------------- inference -------------------------- #
     """
@@ -444,7 +444,8 @@ class MambaBlock(nn.Module):
 
         delta, B, C = torch.split(deltaBC, [self.config.dt_rank, self.config.d_state, self.config.d_state], dim=-1) # (B, dt_rank), (B, N), (B, N)
         delta, B, C = self._apply_layernorms(delta, B, C)
-        delta = F.softplus(self.dt_proj(delta)) # (B, ED)
+        delta = self.dt_proj(delta)
+        delta = F.softplus(delta.float() if delta.dtype in (torch.float16,torch.bfloat16) else delta)
 
         deltaA = torch.exp(delta.unsqueeze(-1) * A) # (B, ED, N)
         deltaB = delta.unsqueeze(-1) * B.unsqueeze(1) # (B, ED, N)
@@ -456,11 +457,11 @@ class MambaBlock(nn.Module):
 
         h = deltaA * h + BX # (B, ED, N)
 
-        y = (h @ C.unsqueeze(-1)).squeeze(2) # (B, ED, N) @ (B, N, 1) -> (B, ED, 1)
+        y = (h @ C.to(h.dtype).unsqueeze(-1)).squeeze(2)
 
         y = y + D * x
 
-        return y, h
+        return y.to(x.dtype), h
 
     def chunk_step(self, x_seq, cache):
         # x_seq : (B, L, D)
@@ -478,6 +479,7 @@ class MambaBlock(nn.Module):
         
         xz = self.in_proj(x_seq) # (B, L, 2*ED)
         x_pre, z = xz.chunk(2, dim=-1) # (B, L, ED), (B, L, ED)
+        inputs = inputs.to(x_pre.dtype)
 
         k = max(self.config.d_conv - 1, 0)
         from mambapy.mps.conv import eligible,conv_silu
@@ -521,7 +523,7 @@ class MambaBlock(nn.Module):
         
         delta = self.dt_proj.weight @ delta.transpose(1, 2) # (ED, dt_rank) @ (B, L, dt_rank) -> (B, ED, L)
         delta = delta.transpose(1, 2) # (B, L, ED)
-        delta = F.softplus(delta + self.dt_proj.bias) # (B, L, ED)
+        delta = F.softplus(delta.float() + self.dt_proj.bias.float()) if delta.dtype in (torch.float16,torch.bfloat16) else F.softplus(delta + self.dt_proj.bias)
 
         if not return_states:
             backend = self.config.backend if self.config.pscan else 'torch'
@@ -536,10 +538,10 @@ class MambaBlock(nn.Module):
         
         hs = pscan(deltaA, BX) # (B, L, ED, N)
         
-        y = (hs @ C.unsqueeze(-1)).squeeze(3) # (B, L, ED)
+        y = (hs @ C.to(hs.dtype).unsqueeze(-1)).squeeze(3)
         y = y + D * x
         
-        return y, hs
+        return y.to(x.dtype), hs
 
 class RMSNorm(nn.Module):
     def __init__(self, d_model: int, eps: float = 1e-5, use_mup: bool = False):
@@ -553,9 +555,10 @@ class RMSNorm(nn.Module):
             self.weight = nn.Parameter(torch.ones(d_model))
 
     def forward(self, x):
-        output = x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+        work=x.float() if x.dtype in (torch.float16,torch.bfloat16) else x
+        output = work * torch.rsqrt(work.pow(2).mean(-1, keepdim=True) + self.eps)
 
         if not self.use_mup:
-            return output * self.weight
+            return (output * self.weight).to(x.dtype)
         else:
-            return output
+            return output.to(x.dtype)
