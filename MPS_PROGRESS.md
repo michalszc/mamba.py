@@ -55,3 +55,9 @@ Added convolution/SiLU forward and backward with optional bias, filter widths 1/
 Chunk execution requests only final state, reusing `ssm_chunk_step` with an optional `return_states=False`; the default still returns every state for compatibility. Native step execution shares the same stateful path. The existing `checkpointed_sequence` helper is reused. Fixed empty convolution history handling for width one and added positive segment-size validation.
 
 Validation covers nonzero initial states, losses on final states, all parameter/input/cache gradients, uneven chunks, checkpointed chunks and individual token steps. The existing cache list is intentionally updated by the model API; tests retain separate references to original states when checking gradients.
+
+## Step 7 — cached generation
+
+`LM.generate` now prefills Mamba-1 once and decodes one token at a time using existing core cache APIs. The output token tensor is preallocated and only the last prompt position is projected to vocabulary logits. Sampling options and the input-device return convention remain intact. Zero-token requests return an empty result. Each module's prior train/eval flag is restored even on an exception.
+
+Validation: 13 generation/stateful tests passed on CPU and MPS, including greedy parity against full-history execution, one-token prompts, batch generation, sampling, zero output tokens, invalid arguments, and assertions of one prefill plus exactly N-1 single-token decode calls.

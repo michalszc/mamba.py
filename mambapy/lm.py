@@ -107,6 +107,9 @@ class LM(nn.Module):
 
         x = self.embedding(tokens)
         x = self.mamba(x)
+        return self._project_logits(x)
+
+    def _project_logits(self, x):
         x = self.norm_f(x)
 
         if self.config.mup:
@@ -117,42 +120,58 @@ class LM(nn.Module):
         return logits
     
     def generate(self, prompt, num_tokens: int, sample: bool = True, top_k: int = None, temperature: float = 1.0):
-        # prompt : (B, L)
-
-        # generation : (B, l)
-
-        # L>>l
-
+        """Return new tokens, prefilling once and caching Mamba-1 recurrence."""
+        if not isinstance(num_tokens,int) or num_tokens < 0:
+            raise ValueError('num_tokens must be a nonnegative integer')
+        if prompt.ndim != 2 or prompt.size(0) == 0:
+            raise ValueError('prompt must have shape (positive batch, length)')
+        if top_k is not None and (not isinstance(top_k,int) or top_k < 1):
+            raise ValueError('top_k must be a positive integer')
+        if sample and temperature <= 0:
+            raise ValueError('temperature must be positive when sampling')
+        if num_tokens == 0:
+            return prompt[:,:0].clone()
+        if prompt.size(1) == 0:
+            raise ValueError('generation requires at least one prompt token')
         if top_k is not None:
-            top_k = min(top_k, self.vocab_size)
-        
+            top_k = min(top_k, self.embedding.num_embeddings)
         input_device = prompt.device
         prompt = prompt.to(self.embedding.weight.device)
-
-        self.eval()
-        generated = prompt.clone()
-
-        with torch.no_grad():
-            for _ in range(num_tokens):
-                logits = self.forward(generated) # (B, L, vocab_size)
-                next_token_logits = logits[:, -1]
-
-                if sample:
-                    probs = F.softmax(next_token_logits / temperature, dim=-1)
-                    
-                    if top_k is not None:
-                        values, _ = torch.topk(probs, k=top_k) # (B, k) ordered from lowest to biggest
-                        probs[probs < values[:, -1, None]] = 0 # zero-out all probs except the k first
-                        probs = probs / probs.sum(axis=1, keepdims=True)
-
-                    next_token = torch.multinomial(probs, num_samples=1)
+        modes=[(module,module.training) for module in self.modules()]
+        try:
+            self.eval()
+            with torch.inference_mode():
+                generated=prompt.new_empty(prompt.size(0),num_tokens)
+                if isinstance(self.mamba,Mamba):
+                    caches=[(None,self.embedding.weight.new_zeros(prompt.size(0),self.config.d_inner,self.config.d_conv-1))
+                            for _ in self.mamba.layers]
+                    hidden,caches=self.mamba.chunk_step(self.embedding(prompt),caches)
+                    logits=self._project_logits(hidden[:,-1])
                 else:
-                    next_token = next_token_logits.argmax(dim=-1, keepdim=True)
-                generated = torch.cat([generated, next_token], dim=1)
-        
-        self.train()
-        
-        return generated.to(input_device)[:, -num_tokens:]
+                    history=prompt
+                    logits=self.forward(history)[:,-1]
+                for i in range(num_tokens):
+                    if sample:
+                        probs=F.softmax(logits/temperature,dim=-1)
+                        if top_k is not None:
+                            cutoff=probs.topk(top_k,dim=-1).values[:,-1:]
+                            probs=probs.masked_fill(probs<cutoff,0)
+                            probs=probs/probs.sum(-1,keepdim=True)
+                        token=torch.multinomial(probs,1)
+                    else:
+                        token=logits.argmax(-1,keepdim=True)
+                    generated[:,i:i+1]=token
+                    if i+1 < num_tokens:
+                        if isinstance(self.mamba,Mamba):
+                            hidden,caches=self.mamba.step(self.embedding(token[:,0]),caches)
+                            logits=self._project_logits(hidden)
+                        else:
+                            history=torch.cat((history,token),dim=1)
+                            logits=self.forward(history)[:,-1]
+                return generated.to(input_device)
+        finally:
+            for module,training in modes:
+                module.training=training
     
     def generate4(self, prompt, num_tokens: int, sample: bool = True, top_k: int = None, temperature: float = 1.0):
         # prompt : (1, L)
