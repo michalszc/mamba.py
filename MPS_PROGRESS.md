@@ -43,3 +43,9 @@ Validation: 35 GPU cases passed for chunk sizes 64/128/256, lengths through 8192
 Added reverse chunk summaries, boundary adjoints, local state recomputation and gradients for every scan input. Compensated accumulation fixes long-sequence derivative cancellation without changing test tolerances. SIMD state reductions and compact atomic accumulation avoid full-sequence state/gradient intermediates. MPS model dispatch is now enabled for supported FP32 inputs.
 
 Validation: 62 passed, 1 CUDA-only skip. Includes all input gradients against double precision through length 2048, non-power-of-two state dimensions, a 100000-scaled analytical derivative, final-state-only loss, frozen inputs, repeated backward/gradient accumulation, and three complete-model AdamW steps matching the reference. Schema and FakeTensor opchecks passed. PyTorch 2.11's autograd-registration opcheck excludes MPS explicitly; direct numerical gradient tests cover that requirement instead.
+
+## Step 5 — convolution
+
+Added convolution/SiLU forward and backward with optional bias, filter widths 1/4/9, differentiable history and views. Validation: 65 scan/convolution/model cases passed.
+
+`python -m benchmarks.conv` compared identical complete MPS blocks with only convolution changed (B=2,D=128). At L=64, forward improved 1.881 -> 1.766 ms and forward/backward 2.445 -> 1.763 ms. At L=512, results were essentially tied; at L=2048 native backward regressed 9.179 -> 9.947 ms. Consequently automatic fused-convolution selection is limited to lengths <=128; longer sequences retain PyTorch convolution on MPS. This is a measured dispatch decision, not an unsupported-operator CPU fallback.

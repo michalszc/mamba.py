@@ -265,11 +265,11 @@ class MambaBlock(nn.Module):
         x, z = xz.chunk(2, dim=-1) # (B, L, ED), (B, L, ED)
 
         # x branch
-        x = x.transpose(1, 2) # (B, ED, L)
-        x = self.conv1d(x)[:, :, :L] # depthwise convolution over time, with a short filter
-        x = x.transpose(1, 2) # (B, L, ED)
-
-        x = F.silu(x)
+        from mambapy.mps.conv import eligible, conv_silu
+        if eligible(x,self.config):
+            x = conv_silu(x,self.conv1d.weight,self.conv1d.bias)
+        else:
+            x = F.silu(self.conv1d(x.transpose(1,2))[:,:,:L].transpose(1,2))
         y = self.ssm(x, z)
 
         if self.config.use_cuda:
