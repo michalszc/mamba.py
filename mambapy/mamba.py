@@ -257,6 +257,18 @@ class MambaBlock(nn.Module):
             C = self.C_layernorm(C)
         return dt, B, C
 
+    def _project_delta(self, delta):
+        # Linear handles the existing projection without a batched transpose
+        # and produces the contiguous BLD layout consumed by the Metal scan.
+        if (delta.device.type == 'mps' and self.config.backend != 'torch'
+                and self.config.pscan and not self.config.use_cuda):
+            delta = F.linear(delta, self.dt_proj.weight)
+        else:
+            delta = (self.dt_proj.weight @ delta.transpose(1, 2)).transpose(1, 2)
+        if delta.dtype in (torch.float16, torch.bfloat16):
+            return F.softplus(delta.float() + self.dt_proj.bias.float())
+        return F.softplus(delta + self.dt_proj.bias)
+
     def forward(self, x):
         # x : (B, L, D)
         
@@ -300,12 +312,12 @@ class MambaBlock(nn.Module):
         deltaBC = self.x_proj(x) # (B, L, dt_rank+2*N)
         delta, B, C = torch.split(deltaBC, [self.config.dt_rank, self.config.d_state, self.config.d_state], dim=-1) # (B, L, dt_rank), (B, L, N), (B, L, N)
         delta, B, C = self._apply_layernorms(delta, B, C)
-        delta = self.dt_proj.weight @ delta.transpose(1, 2) # (ED, dt_rank) @ (B, L, dt_rank) -> (B, ED, L)
         # here we just apply the matrix mul operation of delta = softplus(dt_proj(delta))
         # the rest will be applied later (fused if using cuda)
         
         # choose which selective_scan function to use, according to config
         if self.config.use_cuda:
+            delta = self.dt_proj.weight @ delta.transpose(1, 2)
             # these are unfortunately needed for the selective_scan_cuda function
             x = x.transpose(1, 2)
             B = B.transpose(1, 2)
@@ -317,8 +329,7 @@ class MambaBlock(nn.Module):
             y = y.transpose(1, 2) # (B, L, ED)
         
         else:
-            delta = delta.transpose(1, 2)
-            delta = F.softplus(delta.float() + self.dt_proj.bias.float()) if delta.dtype in (torch.float16,torch.bfloat16) else F.softplus(delta + self.dt_proj.bias)
+            delta = self._project_delta(delta)
 
             if self.config.pscan:
                 y = self.selective_scan(x, delta, A, B, C, D)
@@ -521,9 +532,7 @@ class MambaBlock(nn.Module):
         delta, B, C = torch.split(deltaBC, [self.config.dt_rank, self.config.d_state, self.config.d_state], dim=-1)
         delta, B, C = self._apply_layernorms(delta, B, C)
         
-        delta = self.dt_proj.weight @ delta.transpose(1, 2) # (ED, dt_rank) @ (B, L, dt_rank) -> (B, ED, L)
-        delta = delta.transpose(1, 2) # (B, L, ED)
-        delta = F.softplus(delta.float() + self.dt_proj.bias.float()) if delta.dtype in (torch.float16,torch.bfloat16) else F.softplus(delta + self.dt_proj.bias)
+        delta = self._project_delta(delta)
 
         if not return_states:
             backend = self.config.backend if self.config.pscan else 'torch'

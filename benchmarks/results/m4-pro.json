@@ -1,0 +1,5623 @@
+{
+  "hardware": "Apple M4 Pro, 24 GiB",
+  "gates": {
+    "training": {
+      "speedups": [
+        6.522363303207184,
+        8.02681269100002
+      ],
+      "geometric_mean": 7.235591789031236,
+      "target": 2,
+      "passed": true
+    },
+    "prefill": {
+      "speedups": [
+        12.13198251389733,
+        12.043041417605012
+      ],
+      "geometric_mean": 12.087430160812731,
+      "target": 2,
+      "passed": true
+    },
+    "generation_512": {
+      "speedup": 67.81016236038376,
+      "target": 2,
+      "passed": true
+    },
+    "generation_2048": {
+      "speedup": 258.5417051591064,
+      "target": 2,
+      "passed": true
+    },
+    "pr78_forward": {
+      "ratios": [
+        0.38536925724835697,
+        0.641529277088113,
+        0.8892231157693955,
+        0.9434050262679956,
+        0.9878131238853871
+      ],
+      "maximum_ratio": 1.1,
+      "passed": true
+    },
+    "pr78_forward_repeat": {
+      "ratios": [
+        0.4904163613898432,
+        0.7328102427478617,
+        0.8805872019543102,
+        1.0317066106391426,
+        0.9982890086511097
+      ],
+      "maximum_ratio": 1.1,
+      "passed": true
+    }
+  },
+  "runs": {
+    "130m-mps-speed": {
+      "args": {
+        "size": "130m",
+        "backend": "mps",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-mps-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 484.05600000114646,
+            "median_ms": 46.423833333392395,
+            "p95_ms": 46.52124999968995,
+            "samples_ms": [
+              46.423833333392395,
+              46.52124999968995,
+              46.42193033335692,
+              46.43622233318941,
+              46.37183333397843
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1152090112
+          },
+          "prefill": {
+            "first_ms": 38.56954100047005,
+            "median_ms": 38.46213899911769,
+            "p95_ms": 38.55577800034856,
+            "samples_ms": [
+              38.46213899911769,
+              38.55577800034856,
+              38.492833333293675,
+              38.32834733354199,
+              38.28951400040145
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1168867328
+          },
+          "forward_backward": {
+            "first_ms": 171.96758299905923,
+            "median_ms": 166.68841700084158,
+            "p95_ms": 169.1395410016412,
+            "samples_ms": [
+              169.1395410016412,
+              166.68841700084158,
+              167.78524999972433,
+              165.57287500108941,
+              165.18045799966785
+            ],
+            "live_tensor_bytes": 1098962432,
+            "driver_bytes_snapshot": 2787328000
+          },
+          "training": {
+            "first_ms": 210.972540997318,
+            "median_ms": 206.6419170005247,
+            "p95_ms": 208.77720800126554,
+            "samples_ms": [
+              206.6419170005247,
+              208.77720800126554,
+              207.22691699847928,
+              206.45287500155973,
+              205.94770800016704
+            ],
+            "live_tensor_bytes": 2142989312,
+            "driver_bytes_snapshot": 3917692928
+          },
+          "memory": {
+            "sampled_live_max_bytes": 2589300736,
+            "sampled_driver_max_bytes": 3917692928,
+            "process_max_rss_bytes": 1225555968,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 190.0671670009615,
+            "median_ms": 179.2962500003341,
+            "p95_ms": 180.1205136665279,
+            "samples_ms": [
+              179.26974999985154,
+              179.42497233404234,
+              179.2962500003341,
+              180.1205136665279,
+              179.2255276668584
+            ],
+            "live_tensor_bytes": 516576256,
+            "driver_bytes_snapshot": 1573093376
+          },
+          "prefill": {
+            "first_ms": 149.69433299847879,
+            "median_ms": 149.49758333265586,
+            "p95_ms": 149.9310136665978,
+            "samples_ms": [
+              149.9310136665978,
+              149.6526943325686,
+              149.49758333265586,
+              149.20845833330532,
+              148.85015266675813
+            ],
+            "live_tensor_bytes": 516576256,
+            "driver_bytes_snapshot": 1409515520
+          },
+          "forward_backward": {
+            "first_ms": 636.4259160000074,
+            "median_ms": 627.820416000759,
+            "p95_ms": 630.6721670007391,
+            "samples_ms": [
+              627.3025000009511,
+              627.820416000759,
+              630.6721670007391,
+              630.372208001063,
+              624.2678340022394
+            ],
+            "live_tensor_bytes": 1161661952,
+            "driver_bytes_snapshot": 7413121024
+          },
+          "training": {
+            "first_ms": 670.801082997059,
+            "median_ms": 669.307458003459,
+            "p95_ms": 669.4769589994394,
+            "samples_ms": [
+              669.401207996998,
+              668.5981660011748,
+              669.307458003459,
+              669.4769589994394,
+              668.0130830027338
+            ],
+            "live_tensor_bytes": 2468079104,
+            "driver_bytes_snapshot": 8537194496
+          },
+          "memory": {
+            "sampled_live_max_bytes": 4934040576,
+            "sampled_driver_max_bytes": 8537194496,
+            "process_max_rss_bytes": 1433141248,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "small-mps-bf16-weights-generation": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "precision_mode": "weights",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-mps-bf16-weights-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 887.3975839997001,
+            "median_ms": 393.7807080001221,
+            "p95_ms": 393.9384580007754,
+            "samples_ms": [
+              393.22162499956903,
+              393.9384580007754,
+              393.7807080001221
+            ],
+            "live_tensor_bytes": 24155392,
+            "driver_bytes_snapshot": 69959680
+          },
+          "memory": {
+            "sampled_live_max_bytes": 28082176,
+            "sampled_driver_max_bytes": 69959680,
+            "process_max_rss_bytes": 399867904,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 398.22045899927616,
+            "p95_ms": 401.5249580006639,
+            "samples_ms": [
+              391.7231669984176,
+              398.22045899927616,
+              401.5249580006639
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 419.88087499703397,
+            "median_ms": 402.2751660013455,
+            "p95_ms": 403.1246669983375,
+            "samples_ms": [
+              402.2751660013455,
+              403.1246669983375,
+              399.03912500085426
+            ],
+            "live_tensor_bytes": 24158464,
+            "driver_bytes_snapshot": 69976064
+          },
+          "memory": {
+            "sampled_live_max_bytes": 28947456,
+            "sampled_driver_max_bytes": 69976064,
+            "process_max_rss_bytes": 420347904,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 399.24941700155614,
+            "p95_ms": 400.65812499960884,
+            "samples_ms": [
+              396.1172500021348,
+              399.24941700155614,
+              400.65812499960884
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 421.3226250030857,
+            "median_ms": 406.415500001458,
+            "p95_ms": 411.2557080006809,
+            "samples_ms": [
+              411.2557080006809,
+              406.02716699868324,
+              406.415500001458
+            ],
+            "live_tensor_bytes": 24170752,
+            "driver_bytes_snapshot": 95158272
+          },
+          "memory": {
+            "sampled_live_max_bytes": 24952320,
+            "sampled_driver_max_bytes": 95158272,
+            "process_max_rss_bytes": 443858944,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 404.144666998036,
+            "p95_ms": 405.75179100051173,
+            "samples_ms": [
+              405.75179100051173,
+              403.20854099991266,
+              404.144666998036
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "controlled-blocks": {
+      "torch": "2.11.0",
+      "protocol": "25 warmups per model, 15 rotating-order samples of 5 forwards, synchronized",
+      "rows": [
+        {
+          "batch": 2,
+          "length": 64,
+          "width": 128,
+          "mps": {
+            "first_ms": 0.8892500000001746,
+            "median_ms": 0.2824499999405816,
+            "p95_ms": 0.2989082000567578,
+            "samples_ms": [
+              0.2875750000384869,
+              0.2989082000567578,
+              0.27960000006714836,
+              0.2832415999364457,
+              0.2842165999027202,
+              0.2944832000139286,
+              0.2795083999444614,
+              0.2824499999405816,
+              0.26697499997681007,
+              0.2787331999570597,
+              0.2739084000495495,
+              0.2689999999347492,
+              0.26116680000995984,
+              0.2841665998857934,
+              0.29041660000075353
+            ]
+          },
+          "torch": {
+            "first_ms": 4.907708000246203,
+            "median_ms": 1.0751000001619104,
+            "p95_ms": 1.1151415999847814,
+            "samples_ms": [
+              1.0904083999776049,
+              1.1151415999847814,
+              1.0879166000449914,
+              1.0809916000653175,
+              1.0659749999831547,
+              1.0678417998860823,
+              1.0865333999390714,
+              1.0720750000473345,
+              1.0719665999204153,
+              1.0753500000646454,
+              1.0751000001619104,
+              1.0570416001428384,
+              1.0498583998924005,
+              1.0537250000197673,
+              1.0901499999818043
+            ]
+          },
+          "pr78": {
+            "first_ms": 15.465583000150218,
+            "median_ms": 0.7329333999223309,
+            "p95_ms": 1.56917499989504,
+            "samples_ms": [
+              1.56917499989504,
+              0.5761250000432483,
+              0.7329333999223309,
+              0.5359250000765314,
+              1.071908199992322,
+              0.993074999860255,
+              0.8028415999433491,
+              0.5772165999587742,
+              0.9307999998782179,
+              0.7858249999117106,
+              0.5249249999906169,
+              0.5229999998846324,
+              1.4876000001095235,
+              0.573841799996444,
+              0.5474499999763793
+            ]
+          },
+          "pr_ratio": 0.38536925724835697,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 512,
+          "width": 128,
+          "mps": {
+            "first_ms": 1.208292000228539,
+            "median_ms": 0.518499999998312,
+            "p95_ms": 0.6879583999761962,
+            "samples_ms": [
+              0.6879583999761962,
+              0.518499999998312,
+              0.49926680003409274,
+              0.5433000000266475,
+              0.5308667999997851,
+              0.4945083999700728,
+              0.5364833999919938,
+              0.5419249999249587,
+              0.49150819995702477,
+              0.5457334000311675,
+              0.51188320012443,
+              0.5115834001117037,
+              0.534574999983306,
+              0.5139250000866014,
+              0.5045249999966472
+            ]
+          },
+          "torch": {
+            "first_ms": 6.982833000620303,
+            "median_ms": 6.539724999856844,
+            "p95_ms": 6.619775000035588,
+            "samples_ms": [
+              6.619775000035588,
+              6.596466799965128,
+              6.530283199936093,
+              6.539724999856844,
+              6.5556331999687245,
+              6.52398340007494,
+              6.49958340000012,
+              6.5364168000087375,
+              6.520016600006784,
+              6.56246660000761,
+              6.5241583999522845,
+              6.567383400033577,
+              6.564875000003667,
+              6.537233400013065,
+              6.572583200068038
+            ]
+          },
+          "pr78": {
+            "first_ms": 1.1019579997082474,
+            "median_ms": 0.808225000037055,
+            "p95_ms": 1.83561660014675,
+            "samples_ms": [
+              0.8467084000585601,
+              1.343983199876675,
+              0.637050000113959,
+              1.1842834001072333,
+              0.6658915999651072,
+              0.5994168001052458,
+              0.8947083999373717,
+              0.6960750000871485,
+              0.6341082000290044,
+              0.808225000037055,
+              1.2842333999287803,
+              0.5789415999970515,
+              1.4110250000157976,
+              1.83561660014675,
+              0.6193500001245411
+            ]
+          },
+          "pr_ratio": 0.641529277088113,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 2048,
+          "width": 128,
+          "mps": {
+            "first_ms": 1.990374999877531,
+            "median_ms": 1.6033582000090973,
+            "p95_ms": 1.6429916000561207,
+            "samples_ms": [
+              1.6429916000561207,
+              1.5830667998670833,
+              1.57204159986577,
+              1.6033582000090973,
+              1.629391599999508,
+              1.5820500000700122,
+              1.6362749998734216,
+              1.5707749998910003,
+              1.5543417999651865,
+              1.610116599840694,
+              1.6043333998823073,
+              1.581975000044622,
+              1.6232250000030035,
+              1.6128249999383115,
+              1.5875749999395339
+            ]
+          },
+          "torch": {
+            "first_ms": 25.369916999807174,
+            "median_ms": 25.016349999896192,
+            "p95_ms": 25.078899999971327,
+            "samples_ms": [
+              25.078899999971327,
+              24.980741599938483,
+              25.00589179999224,
+              25.01212499992107,
+              25.050266800099052,
+              25.016349999896192,
+              24.94224160000158,
+              24.9723417999121,
+              25.016558400056965,
+              24.985374999960186,
+              25.059183399935137,
+              25.04360839993751,
+              25.021550000019488,
+              25.04120840003452,
+              24.980616799985
+            ]
+          },
+          "pr78": {
+            "first_ms": 4.917917000057059,
+            "median_ms": 1.8030999999609776,
+            "p95_ms": 2.164075000109733,
+            "samples_ms": [
+              1.8372833999819704,
+              1.7991583999901195,
+              1.785675000064657,
+              2.06014179984777,
+              1.8139583999072784,
+              1.7795250001654495,
+              1.8793667999489116,
+              1.8309834000319825,
+              1.7851249998784624,
+              1.7982000001211418,
+              1.8296332000318216,
+              1.8030999999609776,
+              2.164075000109733,
+              1.798616599990055,
+              1.777791800122941
+            ]
+          },
+          "pr_ratio": 0.8892231157693955,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 512,
+          "width": 384,
+          "mps": {
+            "first_ms": 1.9921250004699687,
+            "median_ms": 1.305491799939773,
+            "p95_ms": 1.3530500000342727,
+            "samples_ms": [
+              1.3513583999156253,
+              1.308358400092402,
+              1.2886250000519794,
+              1.3133665999703226,
+              1.3530500000342727,
+              1.2888831999589456,
+              1.3246750000689644,
+              1.305491799939773,
+              1.2719083999400027,
+              1.3354500000787084,
+              1.2996999999813852,
+              1.302366600066307,
+              1.3317834000190487,
+              1.303308400019887,
+              1.2703000000328757
+            ]
+          },
+          "torch": {
+            "first_ms": 19.417208999584545,
+            "median_ms": 19.022208400019736,
+            "p95_ms": 19.055508399833343,
+            "samples_ms": [
+              19.023700000070676,
+              19.02346659990144,
+              19.02513339991856,
+              19.022208400019736,
+              19.002716799877817,
+              18.99272499995277,
+              19.01185839997197,
+              18.97884999998496,
+              19.036749999941094,
+              19.040416600000754,
+              19.055508399833343,
+              19.02509999999893,
+              18.99721680001676,
+              19.00909159994626,
+              19.02177500014659
+            ]
+          },
+          "pr78": {
+            "first_ms": 1.67566700019961,
+            "median_ms": 1.3838083999871742,
+            "p95_ms": 2.025099999991653,
+            "samples_ms": [
+              1.2788668000212056,
+              1.264150000133668,
+              1.203608399919176,
+              1.7507665999801247,
+              1.7036249999364372,
+              2.025099999991653,
+              1.6234249998888117,
+              1.7971831999602728,
+              1.2362666000626632,
+              1.2910918001580285,
+              1.247499999954016,
+              1.210216599974956,
+              1.4825750000454718,
+              1.422683400051028,
+              1.3838083999871742
+            ]
+          },
+          "pr_ratio": 0.9434050262679956,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 1,
+          "length": 2048,
+          "width": 384,
+          "mps": {
+            "first_ms": 3.2098749998112908,
+            "median_ms": 2.747099999942293,
+            "p95_ms": 2.803508199940552,
+            "samples_ms": [
+              2.803508199940552,
+              2.749633200073731,
+              2.7463750000606524,
+              2.7908584001124837,
+              2.747099999942293,
+              2.730775000054564,
+              2.7898000000277534,
+              2.727941800003464,
+              2.740841599916166,
+              2.7915000000575674,
+              2.7277249999315245,
+              2.7344582000296214,
+              2.795500000138418,
+              2.7357749999282532,
+              2.7634833999400144
+            ]
+          },
+          "torch": {
+            "first_ms": 34.455500000149186,
+            "median_ms": 34.05593340012274,
+            "p95_ms": 34.182116800002404,
+            "samples_ms": [
+              34.182116800002404,
+              34.031833200060646,
+              34.05583339990699,
+              34.04626659994392,
+              34.072158399976615,
+              34.005733400044846,
+              34.04494999995222,
+              34.026416599954246,
+              34.02354159989045,
+              34.05593340012274,
+              34.092083199902845,
+              34.10524999999325,
+              34.056299999974726,
+              34.15057500005787,
+              34.12781660008477
+            ]
+          },
+          "pr78": {
+            "first_ms": 3.342083000461571,
+            "median_ms": 2.780991600047855,
+            "p95_ms": 4.018091599937179,
+            "samples_ms": [
+              2.781158399920969,
+              2.768599999944854,
+              2.755158199943253,
+              2.78600000001461,
+              2.7640750000500702,
+              2.7395000000979053,
+              2.8210499998749583,
+              2.780991600047855,
+              2.7455416000520927,
+              2.7648666000459343,
+              2.790716800154769,
+              2.7421333999882336,
+              2.78600000001461,
+              4.018091599937179,
+              3.126258199881704
+            ]
+          },
+          "pr_ratio": 0.9878131238853871,
+          "pr_gate_pass": true
+        }
+      ]
+    },
+    "130m-transformer-bf16-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-transformer-bf16-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 128457216,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 2292.8247499985446,
+            "median_ms": 1999.3734169984236,
+            "p95_ms": 2025.2089999994496,
+            "samples_ms": [
+              1972.277374999976,
+              1999.3734169984236,
+              2025.2089999994496
+            ],
+            "live_tensor_bytes": 564161536,
+            "driver_bytes_snapshot": 1185677312
+          },
+          "memory": {
+            "sampled_live_max_bytes": 670332416,
+            "sampled_driver_max_bytes": 1185677312,
+            "process_max_rss_bytes": 1110016000,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1972.1330829997896,
+            "p95_ms": 1981.685374998051,
+            "samples_ms": [
+              1955.2012080021086,
+              1981.685374998051,
+              1972.1330829997896
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 2018.145458001527,
+            "median_ms": 2003.653250001662,
+            "p95_ms": 2011.4735409988498,
+            "samples_ms": [
+              2003.653250001662,
+              2011.4735409988498,
+              1986.0984170009033
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1295024128
+          },
+          "memory": {
+            "sampled_live_max_bytes": 700385792,
+            "sampled_driver_max_bytes": 1295024128,
+            "process_max_rss_bytes": 1110016000,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1997.803209000267,
+            "p95_ms": 2034.1444580008101,
+            "samples_ms": [
+              1997.803209000267,
+              1995.602457998757,
+              2034.1444580008101
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 3028.0924170001526,
+            "median_ms": 3024.0324170008535,
+            "p95_ms": 3025.311666999187,
+            "samples_ms": [
+              3024.0324170008535,
+              3019.141332999425,
+              3025.311666999187
+            ],
+            "live_tensor_bytes": 564176896,
+            "driver_bytes_snapshot": 1500577792
+          },
+          "memory": {
+            "sampled_live_max_bytes": 853583872,
+            "sampled_driver_max_bytes": 1500577792,
+            "process_max_rss_bytes": 1110016000,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 2689.436000000569,
+            "p95_ms": 2693.0097500007832,
+            "samples_ms": [
+              2693.0097500007832,
+              2689.436000000569,
+              2688.12041700221
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "130m-transformer-speed": {
+      "args": {
+        "size": "130m",
+        "backend": "transformer",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "output": "benchmark-results/130m-transformer-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 128457216,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "1f5e256131d75616c3b6afdd81c9fc8ca86315a41cce9cdfafe7d7cd7659d460",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 167.67000000072585,
+            "median_ms": 44.44045833315613,
+            "p95_ms": 44.662458333429335,
+            "samples_ms": [
+              44.44045833315613,
+              44.434235999991266,
+              44.662458333429335,
+              44.33855533322154,
+              44.61737499999193
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1152368640
+          },
+          "prefill": {
+            "first_ms": 37.56191699994815,
+            "median_ms": 36.737235999983874,
+            "p95_ms": 36.971277666452806,
+            "samples_ms": [
+              36.737235999983874,
+              36.971277666452806,
+              36.816180666695196,
+              36.64079166689286,
+              36.52915300002254
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1160757248
+          },
+          "forward_backward": {
+            "first_ms": 318.6193330002425,
+            "median_ms": 138.88958400002593,
+            "p95_ms": 143.17604200005007,
+            "samples_ms": [
+              138.88958400002593,
+              139.34300000073563,
+              138.66837499972462,
+              143.17604200005007,
+              138.7620829991647
+            ],
+            "live_tensor_bytes": 1564431872,
+            "driver_bytes_snapshot": 3643129856
+          },
+          "training": {
+            "first_ms": 184.52420799985703,
+            "median_ms": 178.81175000002258,
+            "p95_ms": 179.43649999961053,
+            "samples_ms": [
+              179.43649999961053,
+              178.81175000002258,
+              178.37258300005487,
+              177.91070800012676,
+              178.8183750004464
+            ],
+            "live_tensor_bytes": 2607321600,
+            "driver_bytes_snapshot": 4716871680
+          },
+          "memory": {
+            "sampled_live_max_bytes": 2723410944,
+            "sampled_driver_max_bytes": 4716871680,
+            "process_max_rss_bytes": 1109983232,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 360.27308300072036,
+            "median_ms": 335.6557500001145,
+            "p95_ms": 337.8798056664891,
+            "samples_ms": [
+              335.6557500001145,
+              337.39091666666354,
+              332.6620693333098,
+              337.8798056664891,
+              333.4131250000307
+            ],
+            "live_tensor_bytes": 564378112,
+            "driver_bytes_snapshot": 2720415744
+          },
+          "prefill": {
+            "first_ms": 306.69645899979514,
+            "median_ms": 306.43951366649463,
+            "p95_ms": 311.2407640001038,
+            "samples_ms": [
+              306.43951366649463,
+              311.2407640001038,
+              305.17688899999484,
+              306.50622199997696,
+              306.4228193334202
+            ],
+            "live_tensor_bytes": 564378112,
+            "driver_bytes_snapshot": 2728804352
+          },
+          "forward_backward": {
+            "first_ms": 1522.9441249994125,
+            "median_ms": 911.9806250000693,
+            "p95_ms": 920.3522910001993,
+            "samples_ms": [
+              920.3522910001993,
+              918.1545830006144,
+              910.9804170002462,
+              911.1599170000773,
+              911.9806250000693
+            ],
+            "live_tensor_bytes": 1345650176,
+            "driver_bytes_snapshot": 11693473792
+          },
+          "training": {
+            "first_ms": 978.9020409998557,
+            "median_ms": 954.4685000000754,
+            "p95_ms": 963.5751250007161,
+            "samples_ms": [
+              954.4685000000754,
+              963.497040999755,
+              963.5751250007161,
+              952.4011670000618,
+              953.5312079997311
+            ],
+            "live_tensor_bytes": 2832815616,
+            "driver_bytes_snapshot": 13840957440
+          },
+          "memory": {
+            "sampled_live_max_bytes": 11153969408,
+            "sampled_driver_max_bytes": 13840957440,
+            "process_max_rss_bytes": 1110360064,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "130m-mps-bf16-weights-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "precision_mode": "weights",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-mps-bf16-weights-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 1927.4889580010495,
+            "median_ms": 1505.1977500006615,
+            "p95_ms": 1532.0513330007088,
+            "samples_ms": [
+              1505.1977500006615,
+              1532.0513330007088,
+              1501.3427919984679
+            ],
+            "live_tensor_bytes": 258271744,
+            "driver_bytes_snapshot": 1118535680
+          },
+          "memory": {
+            "sampled_live_max_bytes": 264988672,
+            "sampled_driver_max_bytes": 1118535680,
+            "process_max_rss_bytes": 1129512960,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1520.8034169991151,
+            "p95_ms": 1523.0155830031435,
+            "samples_ms": [
+              1520.8034169991151,
+              1523.0155830031435,
+              1497.3057089991926
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 1537.363125000411,
+            "median_ms": 1535.3304169984767,
+            "p95_ms": 1537.5263750029262,
+            "samples_ms": [
+              1531.669249998231,
+              1535.3304169984767,
+              1537.5263750029262
+            ],
+            "live_tensor_bytes": 258274816,
+            "driver_bytes_snapshot": 1135329280
+          },
+          "memory": {
+            "sampled_live_max_bytes": 283277824,
+            "sampled_driver_max_bytes": 1135329280,
+            "process_max_rss_bytes": 1169702912,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1517.9006250000384,
+            "p95_ms": 1532.3564579994127,
+            "samples_ms": [
+              1517.9006250000384,
+              1513.3155830008036,
+              1532.3564579994127
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 1664.6970830006467,
+            "median_ms": 1649.7083340000245,
+            "p95_ms": 1650.8411249997152,
+            "samples_ms": [
+              1650.8411249997152,
+              1649.7083340000245,
+              1641.9457500014687
+            ],
+            "live_tensor_bytes": 258287104,
+            "driver_bytes_snapshot": 1110179840
+          },
+          "memory": {
+            "sampled_live_max_bytes": 286111744,
+            "sampled_driver_max_bytes": 1110179840,
+            "process_max_rss_bytes": 1169702912,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1559.6197080012644,
+            "p95_ms": 1607.4707500010845,
+            "samples_ms": [
+              1607.4707500010845,
+              1559.6197080012644,
+              1554.0940419996332
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-torch-generation": {
+      "args": {
+        "size": "small",
+        "backend": "torch",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-torch-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 522.6432499985094,
+            "median_ms": 338.9980840001954,
+            "p95_ms": 343.32841699870187,
+            "samples_ms": [
+              338.9980840001954,
+              337.3855840000033,
+              343.32841699870187
+            ],
+            "live_tensor_bytes": 48309760,
+            "driver_bytes_snapshot": 1101791232
+          },
+          "memory": {
+            "sampled_live_max_bytes": 52735744,
+            "sampled_driver_max_bytes": 1101791232,
+            "process_max_rss_bytes": 341295104,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 341.7603749985574,
+            "p95_ms": 343.60420899974997,
+            "samples_ms": [
+              340.82375000070897,
+              341.7603749985574,
+              343.60420899974997
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 364.7275000002992,
+            "median_ms": 345.40416699746856,
+            "p95_ms": 345.45183299997007,
+            "samples_ms": [
+              343.2013329984329,
+              345.40416699746856,
+              345.45183299997007
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1101824000
+          },
+          "memory": {
+            "sampled_live_max_bytes": 52062976,
+            "sampled_driver_max_bytes": 1101824000,
+            "process_max_rss_bytes": 369639424,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 345.5382920001284,
+            "p95_ms": 346.49104200070724,
+            "samples_ms": [
+              346.49104200070724,
+              345.5382920001284,
+              344.5973749985569
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 487.05770900050993,
+            "median_ms": 473.240416002227,
+            "p95_ms": 475.48174999974435,
+            "samples_ms": [
+              472.1980419999454,
+              475.48174999974435,
+              473.240416002227
+            ],
+            "live_tensor_bytes": 48325120,
+            "driver_bytes_snapshot": 2175598592
+          },
+          "memory": {
+            "sampled_live_max_bytes": 51115264,
+            "sampled_driver_max_bytes": 2175598592,
+            "process_max_rss_bytes": 397967360,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 341.8610000007902,
+            "p95_ms": 342.3969590003253,
+            "samples_ms": [
+              342.3969590003253,
+              340.0927499969839,
+              341.8610000007902
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-transformer-bf16-weights-generation": {
+      "args": {
+        "size": "small",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "precision_mode": "weights",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-transformer-bf16-weights-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12214272,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 315.06187500053784,
+            "median_ms": 235.49700000148732,
+            "p95_ms": 236.280249999254,
+            "samples_ms": [
+              236.280249999254,
+              235.49700000148732,
+              235.02424999969662
+            ],
+            "live_tensor_bytes": 37012480,
+            "driver_bytes_snapshot": 95158272
+          },
+          "memory": {
+            "sampled_live_max_bytes": 41506560,
+            "sampled_driver_max_bytes": 95158272,
+            "process_max_rss_bytes": 393379840,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 232.04058299961616,
+            "p95_ms": 232.65362500023912,
+            "samples_ms": [
+              231.50449999957345,
+              232.65362500023912,
+              232.04058299961616
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 245.65329200049746,
+            "median_ms": 237.22695900141844,
+            "p95_ms": 237.24666699854424,
+            "samples_ms": [
+              237.24666699854424,
+              237.22695900141844,
+              236.84829200283275
+            ],
+            "live_tensor_bytes": 37015552,
+            "driver_bytes_snapshot": 183533568
+          },
+          "memory": {
+            "sampled_live_max_bytes": 46719232,
+            "sampled_driver_max_bytes": 183533568,
+            "process_max_rss_bytes": 397475840,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 234.53454099944793,
+            "p95_ms": 235.332667001785,
+            "samples_ms": [
+              235.332667001785,
+              234.36041699824273,
+              234.53454099944793
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 314.38654200246674,
+            "median_ms": 285.7599169983587,
+            "p95_ms": 286.04654199807555,
+            "samples_ms": [
+              285.33587499987334,
+              285.7599169983587,
+              286.04654199807555
+            ],
+            "live_tensor_bytes": 37027840,
+            "driver_bytes_snapshot": 1387331584
+          },
+          "memory": {
+            "sampled_live_max_bytes": 62510848,
+            "sampled_driver_max_bytes": 1387331584,
+            "process_max_rss_bytes": 416481280,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 256.2319579992618,
+            "p95_ms": 256.5732080001908,
+            "samples_ms": [
+              255.70204199902946,
+              256.5732080001908,
+              256.2319579992618
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-transformer-bf16-generation": {
+      "args": {
+        "size": "small",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-transformer-bf16-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12214272,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 881.3897500003804,
+            "median_ms": 512.5175840003067,
+            "p95_ms": 513.731082999584,
+            "samples_ms": [
+              513.731082999584,
+              512.5175840003067,
+              509.57179199758684
+            ],
+            "live_tensor_bytes": 74023936,
+            "driver_bytes_snapshot": 1110179840
+          },
+          "memory": {
+            "sampled_live_max_bytes": 84382208,
+            "sampled_driver_max_bytes": 1110179840,
+            "process_max_rss_bytes": 398983168,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 513.321457998245,
+            "p95_ms": 515.9323340012634,
+            "samples_ms": [
+              512.6456250000047,
+              513.321457998245,
+              515.9323340012634
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 534.1917919977277,
+            "median_ms": 519.0522080010851,
+            "p95_ms": 539.3733330020041,
+            "samples_ms": [
+              539.3733330020041,
+              518.5268329987593,
+              519.0522080010851
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1131446272
+          },
+          "memory": {
+            "sampled_live_max_bytes": 85798400,
+            "sampled_driver_max_bytes": 1131446272,
+            "process_max_rss_bytes": 419266560,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 519.5346250002331,
+            "p95_ms": 525.7267500019225,
+            "samples_ms": [
+              514.6692090020224,
+              519.5346250002331,
+              525.7267500019225
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 564.6464589990501,
+            "median_ms": 544.7787920020346,
+            "p95_ms": 545.10512500201,
+            "samples_ms": [
+              545.10512500201,
+              544.7787920020346,
+              544.6611250008573
+            ],
+            "live_tensor_bytes": 74039296,
+            "driver_bytes_snapshot": 1320222720
+          },
+          "memory": {
+            "sampled_live_max_bytes": 102462976,
+            "sampled_driver_max_bytes": 1320222720,
+            "process_max_rss_bytes": 447791104,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 519.7494159983762,
+            "p95_ms": 521.740125001088,
+            "samples_ms": [
+              519.7494159983762,
+              518.449082999723,
+              521.740125001088
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-mps-speed": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-mps-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 440.04141700133914,
+            "median_ms": 4.851555667604164,
+            "p95_ms": 4.876930666796397,
+            "samples_ms": [
+              4.851555667604164,
+              4.84616666653892,
+              4.8518889998376835,
+              4.876930666796397,
+              4.848083333248117
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1093386240
+          },
+          "prefill": {
+            "first_ms": 5.498709000676172,
+            "median_ms": 4.365583333613661,
+            "p95_ms": 4.386430666878975,
+            "samples_ms": [
+              4.3618193340080325,
+              4.386430666878975,
+              4.317249999682342,
+              4.365583333613661,
+              4.369736000323125
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1101774848
+          },
+          "forward_backward": {
+            "first_ms": 73.55729099799646,
+            "median_ms": 17.423833000066224,
+            "p95_ms": 17.500292000477202,
+            "samples_ms": [
+              17.423833000066224,
+              17.468875001213746,
+              17.236416002560873,
+              17.500292000477202,
+              17.366167001455324
+            ],
+            "live_tensor_bytes": 155729408,
+            "driver_bytes_snapshot": 1156481024
+          },
+          "training": {
+            "first_ms": 41.84891700060689,
+            "median_ms": 21.38941600060207,
+            "p95_ms": 21.571041997958673,
+            "samples_ms": [
+              21.571041997958673,
+              21.380750000389526,
+              21.36495899685542,
+              21.53974999964703,
+              21.38941600060207
+            ],
+            "live_tensor_bytes": 275537920,
+            "driver_bytes_snapshot": 1173241856
+          },
+          "memory": {
+            "sampled_live_max_bytes": 276336384,
+            "sampled_driver_max_bytes": 1173241856,
+            "process_max_rss_bytes": 454377472,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 26.32008400178165,
+            "median_ms": 19.02070833360388,
+            "p95_ms": 19.10074999977951,
+            "samples_ms": [
+              18.92687500003376,
+              19.02070833360388,
+              18.964333333618317,
+              19.10074999977951,
+              19.024402999396745
+            ],
+            "live_tensor_bytes": 48357888,
+            "driver_bytes_snapshot": 1127120896
+          },
+          "prefill": {
+            "first_ms": 17.1407919988269,
+            "median_ms": 16.912361000625726,
+            "p95_ms": 16.9449306667957,
+            "samples_ms": [
+              16.912361000625726,
+              16.874458332798287,
+              16.811389000698302,
+              16.9449306667957,
+              16.91498633347995
+            ],
+            "live_tensor_bytes": 48357888,
+            "driver_bytes_snapshot": 1135509504
+          },
+          "forward_backward": {
+            "first_ms": 74.05820799976937,
+            "median_ms": 61.8469159999222,
+            "p95_ms": 62.10804200236453,
+            "samples_ms": [
+              61.78945899955579,
+              62.10804200236453,
+              61.87220799984061,
+              61.8469159999222,
+              61.839707999752136
+            ],
+            "live_tensor_bytes": 106737152,
+            "driver_bytes_snapshot": 1215381504
+          },
+          "training": {
+            "first_ms": 66.31287499840255,
+            "median_ms": 65.82237499969779,
+            "p95_ms": 65.9677500007092,
+            "samples_ms": [
+              65.85337499927846,
+              65.9677500007092,
+              65.6389579999086,
+              65.61116699958802,
+              65.82237499969779
+            ],
+            "live_tensor_bytes": 253840896,
+            "driver_bytes_snapshot": 1223770112
+          },
+          "memory": {
+            "sampled_live_max_bytes": 256996864,
+            "sampled_driver_max_bytes": 1223770112,
+            "process_max_rss_bytes": 520388608,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "small-transformer-bf16-speed": {
+      "args": {
+        "size": "small",
+        "backend": "transformer",
+        "mode": "speed",
+        "dtype": "bfloat16",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-transformer-bf16-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12214272,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 331.42579199920874,
+            "median_ms": 4.425388999758677,
+            "p95_ms": 4.47787500039946,
+            "samples_ms": [
+              4.476555666769855,
+              4.47787500039946,
+              4.425388999758677,
+              4.406680667064696,
+              4.386485999323971
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1114636288
+          },
+          "prefill": {
+            "first_ms": 5.05170899850782,
+            "median_ms": 4.019278000972311,
+            "p95_ms": 4.031708333059214,
+            "samples_ms": [
+              4.009958333578349,
+              4.031708333059214,
+              4.019278000972311,
+              3.977888999846376,
+              4.019500000140397
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1131413504
+          },
+          "forward_backward": {
+            "first_ms": 200.24800000101095,
+            "median_ms": 15.21604199660942,
+            "p95_ms": 15.254292000463465,
+            "samples_ms": [
+              15.21604199660942,
+              15.184874999249587,
+              15.243249999912223,
+              15.254292000463465,
+              15.140292001888156
+            ],
+            "live_tensor_bytes": 169481728,
+            "driver_bytes_snapshot": 1219543040
+          },
+          "training": {
+            "first_ms": 40.57237500092015,
+            "median_ms": 19.1064999999071,
+            "p95_ms": 19.179292001354042,
+            "samples_ms": [
+              19.16312500179629,
+              19.090958001470426,
+              19.029292001505382,
+              19.179292001354042,
+              19.1064999999071
+            ],
+            "live_tensor_bytes": 311461120,
+            "driver_bytes_snapshot": 1269874688
+          },
+          "memory": {
+            "sampled_live_max_bytes": 327587584,
+            "sampled_driver_max_bytes": 1269874688,
+            "process_max_rss_bytes": 517324800,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 79.53520800219849,
+            "median_ms": 38.91631933341463,
+            "p95_ms": 38.926749999518506,
+            "samples_ms": [
+              38.86558333397261,
+              38.91704166744603,
+              38.926749999518506,
+              38.854708333625844,
+              38.91631933341463
+            ],
+            "live_tensor_bytes": 74432512,
+            "driver_bytes_snapshot": 1341210624
+          },
+          "prefill": {
+            "first_ms": 37.735334000899456,
+            "median_ms": 37.36216666584369,
+            "p95_ms": 37.41281966722454,
+            "samples_ms": [
+              37.36216666584369,
+              37.30206966671782,
+              37.41281966722454,
+              37.33376400001968,
+              37.378513667742176
+            ],
+            "live_tensor_bytes": 74432512,
+            "driver_bytes_snapshot": 1349599232
+          },
+          "forward_backward": {
+            "first_ms": 114.73445799856563,
+            "median_ms": 105.25479100033408,
+            "p95_ms": 105.4919170019275,
+            "samples_ms": [
+              105.4919170019275,
+              105.30504200141877,
+              104.82212500210153,
+              105.25479100033408,
+              105.23333300079685
+            ],
+            "live_tensor_bytes": 146615552,
+            "driver_bytes_snapshot": 2469543936
+          },
+          "training": {
+            "first_ms": 109.46091699952376,
+            "median_ms": 109.40287499761325,
+            "p95_ms": 109.5957500001532,
+            "samples_ms": [
+              109.5957500001532,
+              109.40287499761325,
+              109.46433400022215,
+              109.22566700173775,
+              109.03129099824582
+            ],
+            "live_tensor_bytes": 245768448,
+            "driver_bytes_snapshot": 2494709760
+          },
+          "memory": {
+            "sampled_live_max_bytes": 664709632,
+            "sampled_driver_max_bytes": 2494709760,
+            "process_max_rss_bytes": 582631424,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "130m-transformer-bf16-weights-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "precision_mode": "weights",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-transformer-bf16-weights-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 128457216,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 917.0835420009098,
+            "median_ms": 882.6765830017393,
+            "p95_ms": 883.3416250017763,
+            "samples_ms": [
+              882.6765830017393,
+              883.3416250017763,
+              881.6200830005982
+            ],
+            "live_tensor_bytes": 282081280,
+            "driver_bytes_snapshot": 1185677312
+          },
+          "memory": {
+            "sampled_live_max_bytes": 312236544,
+            "sampled_driver_max_bytes": 1185677312,
+            "process_max_rss_bytes": 1192247296,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 875.3885420010192,
+            "p95_ms": 887.4959999993735,
+            "samples_ms": [
+              887.4959999993735,
+              875.3885420010192,
+              871.2887500005309
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 909.414249999827,
+            "median_ms": 900.6142920006823,
+            "p95_ms": 900.752374996955,
+            "samples_ms": [
+              900.752374996955,
+              900.0959579971095,
+              900.6142920006823
+            ],
+            "live_tensor_bytes": 282084352,
+            "driver_bytes_snapshot": 1295024128
+          },
+          "memory": {
+            "sampled_live_max_bytes": 351306496,
+            "sampled_driver_max_bytes": 1295024128,
+            "process_max_rss_bytes": 1192247296,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 899.1393329997663,
+            "p95_ms": 905.5184170028951,
+            "samples_ms": [
+              899.1393329997663,
+              905.5184170028951,
+              899.0211249983986
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 2233.912125000643,
+            "median_ms": 2211.2603339992347,
+            "p95_ms": 2212.249166001129,
+            "samples_ms": [
+              2211.031457998615,
+              2212.249166001129,
+              2211.2603339992347
+            ],
+            "live_tensor_bytes": 282096640,
+            "driver_bytes_snapshot": 1500577792
+          },
+          "memory": {
+            "sampled_live_max_bytes": 568357888,
+            "sampled_driver_max_bytes": 1500577792,
+            "process_max_rss_bytes": 1192247296,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1897.8708329996152,
+            "p95_ms": 1898.6640000002808,
+            "samples_ms": [
+              1898.6640000002808,
+              1895.6266249988403,
+              1897.8708329996152
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "130m-torch-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "torch",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-torch-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 1460.6774160019995,
+            "median_ms": 1330.0262920020032,
+            "p95_ms": 1335.880291997455,
+            "samples_ms": [
+              1330.0262920020032,
+              1335.880291997455,
+              1326.8289580009878
+            ],
+            "live_tensor_bytes": 516542464,
+            "driver_bytes_snapshot": 1126957056
+          },
+          "memory": {
+            "sampled_live_max_bytes": 719187968,
+            "sampled_driver_max_bytes": 1126957056,
+            "process_max_rss_bytes": 996294656,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1319.836333001149,
+            "p95_ms": 1325.2252499987662,
+            "samples_ms": [
+              1319.836333001149,
+              1308.212874999299,
+              1325.2252499987662
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 1681.203624997579,
+            "median_ms": 1689.2900839993672,
+            "p95_ms": 1721.0571670002537,
+            "samples_ms": [
+              1689.2900839993672,
+              1668.7478330022714,
+              1721.0571670002537
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 2200731648
+          },
+          "memory": {
+            "sampled_live_max_bytes": 1425818880,
+            "sampled_driver_max_bytes": 2200731648,
+            "process_max_rss_bytes": 1027817472,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1326.0582920011075,
+            "p95_ms": 1345.3909159979958,
+            "samples_ms": [
+              1345.3909159979958,
+              1320.7157500000903,
+              1326.0582920011075
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 2966.890167001111,
+            "median_ms": 2924.6708339996985,
+            "p95_ms": 2935.1521659991704,
+            "samples_ms": [
+              2908.5113750006713,
+              2935.1521659991704,
+              2924.6708339996985
+            ],
+            "live_tensor_bytes": 516557824,
+            "driver_bytes_snapshot": 7569473536
+          },
+          "memory": {
+            "sampled_live_max_bytes": 4148803840,
+            "sampled_driver_max_bytes": 7569473536,
+            "process_max_rss_bytes": 1032765440,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1323.765832999925,
+            "p95_ms": 1330.6492920019082,
+            "samples_ms": [
+              1323.765832999925,
+              1318.2997080002679,
+              1330.6492920019082
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-transformer-generation": {
+      "args": {
+        "size": "small",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-transformer-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12214272,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "29c0f98ba9c11a139ee2127f9b7fc117bdef4eded45bead75b3b8d67e0f05cc7",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 590.4325000001336,
+            "median_ms": 233.38320800030488,
+            "p95_ms": 233.85120799957804,
+            "samples_ms": [
+              233.85120799957804,
+              233.38320800030488,
+              233.33604100025696
+            ],
+            "live_tensor_bytes": 74023936,
+            "driver_bytes_snapshot": 1177288704
+          },
+          "memory": {
+            "sampled_live_max_bytes": 83011584,
+            "sampled_driver_max_bytes": 1177288704,
+            "process_max_rss_bytes": 389496832,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 233.23837500083755,
+            "p95_ms": 233.71708299964666,
+            "samples_ms": [
+              231.98287499963044,
+              233.71708299964666,
+              233.23837500083755
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 255.55829199947766,
+            "median_ms": 233.62683300001663,
+            "p95_ms": 239.52754199945048,
+            "samples_ms": [
+              233.62683300001663,
+              232.46129200015275,
+              239.52754199945048
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1123057664
+          },
+          "memory": {
+            "sampled_live_max_bytes": 93434112,
+            "sampled_driver_max_bytes": 1123057664,
+            "process_max_rss_bytes": 393691136,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 241.4642499998081,
+            "p95_ms": 242.588166999667,
+            "samples_ms": [
+              242.588166999667,
+              241.4642499998081,
+              235.99083299995982
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 330.4065830006948,
+            "median_ms": 321.9691670001339,
+            "p95_ms": 323.0717500000537,
+            "samples_ms": [
+              321.762624999792,
+              321.9691670001339,
+              323.0717500000537
+            ],
+            "live_tensor_bytes": 74039296,
+            "driver_bytes_snapshot": 1320222720
+          },
+          "memory": {
+            "sampled_live_max_bytes": 124961536,
+            "sampled_driver_max_bytes": 1320222720,
+            "process_max_rss_bytes": 415924224,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 292.71854200032976,
+            "p95_ms": 292.88795799948275,
+            "samples_ms": [
+              292.71854200032976,
+              292.88795799948275,
+              291.3913330003197
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-torch-speed": {
+      "args": {
+        "size": "small",
+        "backend": "torch",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "output": "benchmark-results/small-torch-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "1f5e256131d75616c3b6afdd81c9fc8ca86315a41cce9cdfafe7d7cd7659d460",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 103.85895799845457,
+            "median_ms": 53.607221999603404,
+            "p95_ms": 53.70549999982662,
+            "samples_ms": [
+              53.70549999982662,
+              53.63219466623074,
+              53.607221999603404,
+              53.604805666206325,
+              53.148249999746135
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1093386240
+          },
+          "prefill": {
+            "first_ms": 55.33587499849091,
+            "median_ms": 52.963180666362554,
+            "p95_ms": 53.23461133290645,
+            "samples_ms": [
+              53.021097333233534,
+              53.23461133290645,
+              52.68680566647769,
+              52.963180666362554,
+              52.63186133318717
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1110179840
+          },
+          "forward_backward": {
+            "first_ms": 146.72404200064193,
+            "median_ms": 136.17400000111957,
+            "p95_ms": 137.0512499997858,
+            "samples_ms": [
+              137.0512499997858,
+              136.62987499992596,
+              134.99370899990026,
+              136.17400000111957,
+              135.1092080003582
+            ],
+            "live_tensor_bytes": 321869824,
+            "driver_bytes_snapshot": 2221850624
+          },
+          "training": {
+            "first_ms": 138.40533300026436,
+            "median_ms": 139.5095419993595,
+            "p95_ms": 139.757708999241,
+            "samples_ms": [
+              139.757708999241,
+              138.91783300095994,
+              139.28083300015714,
+              139.5095419993595,
+              139.570207998986
+            ],
+            "live_tensor_bytes": 711664128,
+            "driver_bytes_snapshot": 2230239232
+          },
+          "memory": {
+            "sampled_live_max_bytes": 1415741952,
+            "sampled_driver_max_bytes": 2230239232,
+            "process_max_rss_bytes": 461570048,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 217.9012500000681,
+            "median_ms": 205.7824166665038,
+            "p95_ms": 206.3321803331443,
+            "samples_ms": [
+              205.1502636671406,
+              206.3321803331443,
+              206.00906966622765,
+              205.7824166665038,
+              205.51977799974944
+            ],
+            "live_tensor_bytes": 48374272,
+            "driver_bytes_snapshot": 1127170048
+          },
+          "prefill": {
+            "first_ms": 206.29195800029265,
+            "median_ms": 203.67626400002337,
+            "p95_ms": 203.97773633339966,
+            "samples_ms": [
+              203.67626400002337,
+              203.94661099999212,
+              203.97773633339966,
+              203.2429583329455,
+              203.4796390004582
+            ],
+            "live_tensor_bytes": 48374272,
+            "driver_bytes_snapshot": 2186248192
+          },
+          "forward_backward": {
+            "first_ms": 524.040917000093,
+            "median_ms": 524.8920419999195,
+            "p95_ms": 526.0414580006909,
+            "samples_ms": [
+              524.6117079987016,
+              525.6030420005118,
+              524.2152499995427,
+              524.8920419999195,
+              526.0414580006909
+            ],
+            "live_tensor_bytes": 118913536,
+            "driver_bytes_snapshot": 3350347776
+          },
+          "training": {
+            "first_ms": 529.2142500002228,
+            "median_ms": 528.3438749993365,
+            "p95_ms": 529.3096249988594,
+            "samples_ms": [
+              529.3096249988594,
+              528.2179999994696,
+              528.335540999251,
+              529.1069590002735,
+              528.3438749993365
+            ],
+            "live_tensor_bytes": 333609472,
+            "driver_bytes_snapshot": 3358736384
+          },
+          "memory": {
+            "sampled_live_max_bytes": 2608217088,
+            "sampled_driver_max_bytes": 3358736384,
+            "process_max_rss_bytes": 531087360,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "small-torch-uncached": {
+      "args": {
+        "size": "small",
+        "backend": "torch",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": true,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-torch-uncached.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "2e4ba1cfb5cdc70b42568f982bcb81733f69af8f9ea11fe4449a3cc322ca2e19",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 12461.150167000596,
+            "median_ms": 7242.926749999242,
+            "p95_ms": 7244.365499998821,
+            "samples_ms": [
+              7244.365499998821,
+              7242.926749999242,
+              7241.719458001171
+            ],
+            "live_tensor_bytes": 48309760,
+            "driver_bytes_snapshot": 4399759360
+          },
+          "memory": {
+            "sampled_live_max_bytes": 189640448,
+            "sampled_driver_max_bytes": 4399759360,
+            "process_max_rss_bytes": 1246838784,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 18951.770042000135,
+            "median_ms": 18485.002249999525,
+            "p95_ms": 18505.61391699921,
+            "samples_ms": [
+              18470.26658300092,
+              18505.61391699921,
+              18485.002249999525
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 9290711040
+          },
+          "memory": {
+            "sampled_live_max_bytes": 347178752,
+            "sampled_driver_max_bytes": 9290711040,
+            "process_max_rss_bytes": 2083340288,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 71132.60274999993,
+            "median_ms": 68007.60720899962,
+            "p95_ms": 68015.02320800137,
+            "samples_ms": [
+              68007.60720899962,
+              67984.59295800058,
+              68015.02320800137
+            ],
+            "live_tensor_bytes": 48325120,
+            "driver_bytes_snapshot": 7571308544
+          },
+          "memory": {
+            "sampled_live_max_bytes": 857063168,
+            "sampled_driver_max_bytes": 7571308544,
+            "process_max_rss_bytes": 2083340288,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "small-mps-bf16-speed": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "speed",
+        "dtype": "bfloat16",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-mps-bf16-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 503.459000003204,
+            "median_ms": 4.925722000431658,
+            "p95_ms": 4.975055666970245,
+            "samples_ms": [
+              4.844208332845786,
+              4.925722000431658,
+              4.928000000897252,
+              4.975055666970245,
+              4.92102800005038
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1101774848
+          },
+          "prefill": {
+            "first_ms": 122.66683399866452,
+            "median_ms": 4.418097333352004,
+            "p95_ms": 4.460305666725617,
+            "samples_ms": [
+              4.44963866660449,
+              4.460305666725617,
+              4.411194332836506,
+              4.389749999972992,
+              4.418097333352004
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1110163456
+          },
+          "forward_backward": {
+            "first_ms": 265.0619160012866,
+            "median_ms": 17.638207998970756,
+            "p95_ms": 17.82416599962744,
+            "samples_ms": [
+              17.82416599962744,
+              17.48004199907882,
+              17.638207998970756,
+              17.69879200219293,
+              17.395792001480004
+            ],
+            "live_tensor_bytes": 137079296,
+            "driver_bytes_snapshot": 1181630464
+          },
+          "training": {
+            "first_ms": 41.98037500100327,
+            "median_ms": 21.669999998266576,
+            "p95_ms": 21.716666997235734,
+            "samples_ms": [
+              21.716666997235734,
+              21.669999998266576,
+              21.464333000039915,
+              21.688707998691825,
+              21.526958000322338
+            ],
+            "live_tensor_bytes": 296365056,
+            "driver_bytes_snapshot": 1231962112
+          },
+          "memory": {
+            "sampled_live_max_bytes": 296365056,
+            "sampled_driver_max_bytes": 1231962112,
+            "process_max_rss_bytes": 464748544,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 52.45233300229302,
+            "median_ms": 17.492611000003915,
+            "p95_ms": 17.583041666512145,
+            "samples_ms": [
+              17.460125000070548,
+              17.49905566612142,
+              17.583041666512145,
+              17.492611000003915,
+              17.451638999773422
+            ],
+            "live_tensor_bytes": 48331264,
+            "driver_bytes_snapshot": 1127120896
+          },
+          "prefill": {
+            "first_ms": 15.462499999557622,
+            "median_ms": 15.421736333034156,
+            "p95_ms": 15.474874999199528,
+            "samples_ms": [
+              15.460888999465775,
+              15.378986000238607,
+              15.474874999199528,
+              15.33730566613182,
+              15.421736333034156
+            ],
+            "live_tensor_bytes": 48331264,
+            "driver_bytes_snapshot": 1135509504
+          },
+          "forward_backward": {
+            "first_ms": 77.22445800027344,
+            "median_ms": 60.08616700273706,
+            "p95_ms": 60.45441700189258,
+            "samples_ms": [
+              60.45441700189258,
+              59.99179099671892,
+              59.863000002224,
+              60.08616700273706,
+              60.08862500311807
+            ],
+            "live_tensor_bytes": 130234880,
+            "driver_bytes_snapshot": 1223770112
+          },
+          "training": {
+            "first_ms": 64.41216700113728,
+            "median_ms": 63.88316599986865,
+            "p95_ms": 63.97558399839909,
+            "samples_ms": [
+              63.88316599986865,
+              63.97558399839909,
+              63.80587500098045,
+              63.96641600076691,
+              63.60254100218299
+            ],
+            "live_tensor_bytes": 244866048,
+            "driver_bytes_snapshot": 1232158720
+          },
+          "memory": {
+            "sampled_live_max_bytes": 358712320,
+            "sampled_driver_max_bytes": 1232158720,
+            "process_max_rss_bytes": 531136512,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "small-mps-sustained": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 30.0,
+        "output": "benchmark-results/small-mps-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 417.3702920015785,
+            "median_ms": 4.854944333298287,
+            "p95_ms": 4.921222332389637,
+            "samples_ms": [
+              4.921222332389637,
+              4.876485999072126,
+              4.854944333298287,
+              4.821333333287233,
+              4.823819332765804
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1093386240
+          },
+          "prefill": {
+            "first_ms": 6.053416000213474,
+            "median_ms": 4.327402999479091,
+            "p95_ms": 4.4164166671786615,
+            "samples_ms": [
+              4.320680667054451,
+              4.327402999479091,
+              4.4164166671786615,
+              4.3631389999063686,
+              4.294958333048271
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1101774848
+          },
+          "forward_backward": {
+            "first_ms": 66.8626660008158,
+            "median_ms": 17.471458999352762,
+            "p95_ms": 17.525084000226343,
+            "samples_ms": [
+              17.475959000876173,
+              17.45025000127498,
+              17.471458999352762,
+              17.379707998770755,
+              17.525084000226343
+            ],
+            "live_tensor_bytes": 155729408,
+            "driver_bytes_snapshot": 1156481024
+          },
+          "training": {
+            "first_ms": 39.70070799914538,
+            "median_ms": 21.501416998944478,
+            "p95_ms": 21.525915999518475,
+            "samples_ms": [
+              21.5217910008505,
+              21.283291000145255,
+              21.501416998944478,
+              21.496165998541983,
+              21.525915999518475
+            ],
+            "live_tensor_bytes": 275537920,
+            "driver_bytes_snapshot": 1173241856
+          },
+          "memory": {
+            "sampled_live_max_bytes": 292329216,
+            "sampled_driver_max_bytes": 1173241856,
+            "process_max_rss_bytes": 452067328,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "sustained_training": {
+            "duration_seconds": 30.0153126610021,
+            "iterations": 1403,
+            "median_ms": 21.405250001407694,
+            "p95_ms": 21.54675000201678,
+            "first_quarter_median_ms": 21.40679150033975,
+            "last_quarter_median_ms": 21.397937500296393
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 27.5917090002622,
+            "median_ms": 19.161000000167405,
+            "p95_ms": 19.237263667794952,
+            "samples_ms": [
+              19.188333334265433,
+              19.237263667794952,
+              19.142638999862054,
+              19.161000000167405,
+              19.093000000187505
+            ],
+            "live_tensor_bytes": 48357888,
+            "driver_bytes_snapshot": 1127120896
+          },
+          "prefill": {
+            "first_ms": 17.252792000363115,
+            "median_ms": 16.99781966696416,
+            "p95_ms": 17.127402666422615,
+            "samples_ms": [
+              17.036333333332248,
+              17.127402666422615,
+              16.993485999895103,
+              16.99781966696416,
+              16.894611000073684
+            ],
+            "live_tensor_bytes": 48357888,
+            "driver_bytes_snapshot": 1135509504
+          },
+          "forward_backward": {
+            "first_ms": 72.18187499893247,
+            "median_ms": 61.92808299965691,
+            "p95_ms": 62.004999999771826,
+            "samples_ms": [
+              61.96124999769381,
+              61.705666998022934,
+              61.92808299965691,
+              62.004999999771826,
+              61.833667001337744
+            ],
+            "live_tensor_bytes": 106737152,
+            "driver_bytes_snapshot": 1215381504
+          },
+          "training": {
+            "first_ms": 66.05470800059265,
+            "median_ms": 65.80633399789804,
+            "p95_ms": 66.08675000097719,
+            "samples_ms": [
+              65.63049999749637,
+              65.71095900289947,
+              65.80633399789804,
+              66.08675000097719,
+              65.95437500072876
+            ],
+            "live_tensor_bytes": 253840896,
+            "driver_bytes_snapshot": 1223770112
+          },
+          "memory": {
+            "sampled_live_max_bytes": 253982720,
+            "sampled_driver_max_bytes": 1223770112,
+            "process_max_rss_bytes": 543571968,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "sustained_training": {
+            "duration_seconds": 30.045175844992627,
+            "iterations": 457,
+            "median_ms": 65.75079100002768,
+            "p95_ms": 66.0344999996596,
+            "first_quarter_median_ms": 65.73237550037447,
+            "last_quarter_median_ms": 65.74108299901127
+          }
+        }
+      ]
+    },
+    "130m-torch-speed": {
+      "args": {
+        "size": "130m",
+        "backend": "torch",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-torch-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "1f5e256131d75616c3b6afdd81c9fc8ca86315a41cce9cdfafe7d7cd7659d460",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 494.7096670002793,
+            "median_ms": 433.57466666657274,
+            "p95_ms": 445.7124446668483,
+            "samples_ms": [
+              432.66416666665464,
+              432.1067640000062,
+              433.57466666657274,
+              435.86868033344217,
+              445.7124446668483
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1150009344
+          },
+          "prefill": {
+            "first_ms": 428.55979100022523,
+            "median_ms": 421.45770833334,
+            "p95_ms": 427.12977799995616,
+            "samples_ms": [
+              427.12977799995616,
+              426.7784026666656,
+              421.45770833334,
+              418.5496666665737,
+              419.9265136664205
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 2190213120
+          },
+          "forward_backward": {
+            "first_ms": 1094.523959000071,
+            "median_ms": 1094.7669170000154,
+            "p95_ms": 1096.8178749999424,
+            "samples_ms": [
+              1096.1615410005834,
+              1092.9507909995664,
+              1093.511624999337,
+              1094.7669170000154,
+              1096.8178749999424
+            ],
+            "live_tensor_bytes": 1195039744,
+            "driver_bytes_snapshot": 8053309440
+          },
+          "training": {
+            "first_ms": 1139.3342090004808,
+            "median_ms": 1133.9753329993982,
+            "p95_ms": 1135.5482919998394,
+            "samples_ms": [
+              1133.3711669994955,
+              1131.0885830007464,
+              1133.9753329993982,
+              1134.74375000078,
+              1135.5482919998394
+            ],
+            "live_tensor_bytes": 2799453184,
+            "driver_bytes_snapshot": 9168994304
+          },
+          "memory": {
+            "sampled_live_max_bytes": 6413837312,
+            "sampled_driver_max_bytes": 9168994304,
+            "process_max_rss_bytes": 1240367104,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 1758.6058750002849,
+            "median_ms": 1691.7979583331544,
+            "p95_ms": 1698.180444666529,
+            "samples_ms": [
+              1698.180444666529,
+              1688.5143890000716,
+              1691.7979583331544,
+              1692.4508749998495,
+              1688.81062499986
+            ],
+            "live_tensor_bytes": 516576256,
+            "driver_bytes_snapshot": 3540271104
+          },
+          "prefill": {
+            "first_ms": 1667.4540839994734,
+            "median_ms": 1684.6354860002368,
+            "p95_ms": 1692.3974306667635,
+            "samples_ms": [
+              1661.4523056665955,
+              1692.3974306667635,
+              1689.7213613334923,
+              1684.5095696665642,
+              1684.6354860002368
+            ],
+            "live_tensor_bytes": 516576256,
+            "driver_bytes_snapshot": 7722008576
+          },
+          "out_of_budget": "MPS backend out of memory (MPS allocated: 16.08 GiB, other allocations: 148.28 MiB, max allowed: 16.00 GiB). Tried to allocate 192.00 MiB on private pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to disable upper limit for memory allocations (may cause system failure)."
+        }
+      ]
+    },
+    "130m-mps-bf16-speed": {
+      "args": {
+        "size": "130m",
+        "backend": "mps",
+        "mode": "speed",
+        "dtype": "bfloat16",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-mps-bf16-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 600.6772920009098,
+            "median_ms": 46.48698599946025,
+            "p95_ms": 46.62948600040787,
+            "samples_ms": [
+              46.49005566655736,
+              46.62948600040787,
+              46.48698599946025,
+              46.474652666802285,
+              46.46381966692085
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1131118592
+          },
+          "prefill": {
+            "first_ms": 110.33745800159522,
+            "median_ms": 39.593236332924185,
+            "p95_ms": 39.60222233339058,
+            "samples_ms": [
+              39.54513900074138,
+              39.55962499943174,
+              39.59609733404553,
+              39.593236332924185,
+              39.60222233339058
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1147895808
+          },
+          "forward_backward": {
+            "first_ms": 354.74970799987204,
+            "median_ms": 164.66166700047324,
+            "p95_ms": 164.91395800039754,
+            "samples_ms": [
+              164.91395800039754,
+              164.09583299900987,
+              164.12670900172088,
+              164.66166700047324,
+              164.66554200087558
+            ],
+            "live_tensor_bytes": 1059002624,
+            "driver_bytes_snapshot": 2657304576
+          },
+          "training": {
+            "first_ms": 225.45454200007953,
+            "median_ms": 204.64849999916623,
+            "p95_ms": 204.69479199891794,
+            "samples_ms": [
+              204.5536660007201,
+              204.69479199891794,
+              204.6894169980078,
+              204.0797499976179,
+              204.64849999916623
+            ],
+            "live_tensor_bytes": 2114849280,
+            "driver_bytes_snapshot": 4861411328
+          },
+          "memory": {
+            "sampled_live_max_bytes": 2485202944,
+            "sampled_driver_max_bytes": 4861411328,
+            "process_max_rss_bytes": 1240858624,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 206.65466699938406,
+            "median_ms": 163.73543066705074,
+            "p95_ms": 163.76799999973932,
+            "samples_ms": [
+              163.70813866645526,
+              163.74111099988417,
+              163.73543066705074,
+              163.6677500003619,
+              163.76799999973932
+            ],
+            "live_tensor_bytes": 516570112,
+            "driver_bytes_snapshot": 1546878976
+          },
+          "prefill": {
+            "first_ms": 137.97950000298442,
+            "median_ms": 137.60062499932246,
+            "p95_ms": 137.70490299915159,
+            "samples_ms": [
+              137.33630566639476,
+              137.53194466698915,
+              137.6244583322356,
+              137.60062499932246,
+              137.70490299915159
+            ],
+            "live_tensor_bytes": 516570112,
+            "driver_bytes_snapshot": 1397981184
+          },
+          "forward_backward": {
+            "first_ms": 628.7157090009714,
+            "median_ms": 591.6579169970646,
+            "p95_ms": 594.6897499998158,
+            "samples_ms": [
+              594.6897499998158,
+              592.702999998437,
+              591.6579169970646,
+              591.348707999714,
+              590.6042919996253
+            ],
+            "live_tensor_bytes": 1119990016,
+            "driver_bytes_snapshot": 6327844864
+          },
+          "training": {
+            "first_ms": 634.428042001673,
+            "median_ms": 630.5380410012731,
+            "p95_ms": 631.4022920014395,
+            "samples_ms": [
+              631.4022920014395,
+              630.5380410012731,
+              630.5928749970917,
+              630.0548750004964,
+              630.2351670019561
+            ],
+            "live_tensor_bytes": 2385863936,
+            "driver_bytes_snapshot": 7451918336
+          },
+          "memory": {
+            "sampled_live_max_bytes": 4573006848,
+            "sampled_driver_max_bytes": 7451918336,
+            "process_max_rss_bytes": 1451671552,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "130m-mps-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-mps-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 1382.3873750006896,
+            "median_ms": 974.0927499988175,
+            "p95_ms": 1006.8826250026177,
+            "samples_ms": [
+              1006.8826250026177,
+              974.0927499988175,
+              972.6512909983285
+            ],
+            "live_tensor_bytes": 516542464,
+            "driver_bytes_snapshot": 1126924288
+          },
+          "memory": {
+            "sampled_live_max_bytes": 525068544,
+            "sampled_driver_max_bytes": 1126924288,
+            "process_max_rss_bytes": 1020248064,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 973.2559580006637,
+            "p95_ms": 981.9170829978248,
+            "samples_ms": [
+              972.1503750006377,
+              981.9170829978248,
+              973.2559580006637
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 989.7288329993899,
+            "median_ms": 979.3012080008339,
+            "p95_ms": 979.4028750002326,
+            "samples_ms": [
+              973.2580409981892,
+              979.3012080008339,
+              979.4028750002326
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1126940672
+          },
+          "memory": {
+            "sampled_live_max_bytes": 521785600,
+            "sampled_driver_max_bytes": 1126940672,
+            "process_max_rss_bytes": 1051131904,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 980.505791001633,
+            "p95_ms": 982.7054999987013,
+            "samples_ms": [
+              980.505791001633,
+              977.5194590001774,
+              982.7054999987013
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 1016.5675829994143,
+            "median_ms": 1005.7225000018661,
+            "p95_ms": 1023.5068750007486,
+            "samples_ms": [
+              993.6281659975066,
+              1023.5068750007486,
+              1005.7225000018661
+            ],
+            "live_tensor_bytes": 516557824,
+            "driver_bytes_snapshot": 1126957056
+          },
+          "memory": {
+            "sampled_live_max_bytes": 526215424,
+            "sampled_driver_max_bytes": 1126957056,
+            "process_max_rss_bytes": 1054064640,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 998.1488340017677,
+            "p95_ms": 1070.8662500001083,
+            "samples_ms": [
+              1070.8662500001083,
+              998.1488340017677,
+              984.4088749996445
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "130m-mps-bf16-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-mps-bf16-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 129135360,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 2602.787542000442,
+            "median_ms": 1996.3205000021844,
+            "p95_ms": 2006.1409579975589,
+            "samples_ms": [
+              1996.2825420006993,
+              1996.3205000021844,
+              2006.1409579975589
+            ],
+            "live_tensor_bytes": 516542464,
+            "driver_bytes_snapshot": 1126924288
+          },
+          "memory": {
+            "sampled_live_max_bytes": 527907584,
+            "sampled_driver_max_bytes": 1126924288,
+            "process_max_rss_bytes": 1069268992,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1988.0534160001844,
+            "p95_ms": 2006.6954590001842,
+            "samples_ms": [
+              2006.6954590001842,
+              1985.5520839992096,
+              1988.0534160001844
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 2066.785250000976,
+            "median_ms": 2029.9881669998285,
+            "p95_ms": 2054.895208002563,
+            "samples_ms": [
+              2029.9881669998285,
+              2020.0938749985653,
+              2054.895208002563
+            ],
+            "live_tensor_bytes": 516545536,
+            "driver_bytes_snapshot": 1143717888
+          },
+          "memory": {
+            "sampled_live_max_bytes": 611795712,
+            "sampled_driver_max_bytes": 1143717888,
+            "process_max_rss_bytes": 1085308928,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 2009.555000000546,
+            "p95_ms": 2021.8758750015695,
+            "samples_ms": [
+              1990.5671659980726,
+              2009.555000000546,
+              2021.8758750015695
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 2203.892417001043,
+            "median_ms": 2155.176874999597,
+            "p95_ms": 2175.900875001389,
+            "samples_ms": [
+              2155.176874999597,
+              2152.853290997882,
+              2175.900875001389
+            ],
+            "live_tensor_bytes": 516557824,
+            "driver_bytes_snapshot": 1126957056
+          },
+          "memory": {
+            "sampled_live_max_bytes": 597416704,
+            "sampled_driver_max_bytes": 1126957056,
+            "process_max_rss_bytes": 1085308928,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 2027.3631660020328,
+            "p95_ms": 2041.7229170016071,
+            "samples_ms": [
+              2027.3631660020328,
+              2014.494792001642,
+              2041.7229170016071
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "controlled-blocks-repeat": {
+      "torch": "2.11.0",
+      "protocol": "25 warmups per model, 15 rotating-order samples of 5 forwards, synchronized",
+      "rows": [
+        {
+          "batch": 2,
+          "length": 64,
+          "width": 128,
+          "mps": {
+            "first_ms": 0.9130839971476234,
+            "median_ms": 0.26737500011222437,
+            "p95_ms": 0.28805839974666014,
+            "samples_ms": [
+              0.2661915998032782,
+              0.28805839974666014,
+              0.265133199718548,
+              0.2603416003694292,
+              0.2707749998080544,
+              0.26737500011222437,
+              0.2677666001545731,
+              0.2843081994797103,
+              0.2616084006149322,
+              0.2594083998701535,
+              0.2748749997408595,
+              0.27516679983818904,
+              0.26060000018333085,
+              0.27579159941524267,
+              0.26335000002291054
+            ]
+          },
+          "torch": {
+            "first_ms": 4.8260000003210735,
+            "median_ms": 1.0769331995106768,
+            "p95_ms": 1.1142831994220614,
+            "samples_ms": [
+              1.0769331995106768,
+              1.057724999554921,
+              1.0802415999933146,
+              1.071841799421236,
+              1.084741600061534,
+              1.070691600034479,
+              1.0648415998730343,
+              1.0700500002712943,
+              1.078350000170758,
+              1.0770000000775326,
+              1.068949999898905,
+              1.066999999602558,
+              1.078399999823887,
+              1.1142831994220614,
+              1.0889833996770903
+            ]
+          },
+          "pr78": {
+            "first_ms": 1.0357499995734543,
+            "median_ms": 0.5451999997603707,
+            "p95_ms": 0.9543417996610515,
+            "samples_ms": [
+              0.5051915999501944,
+              0.502041799336439,
+              0.8960250001109671,
+              0.7652915999642573,
+              0.5321333999745548,
+              0.5451999997603707,
+              0.5317999995895661,
+              0.5424750001111533,
+              0.565016800101148,
+              0.6054166005924344,
+              0.9543417996610515,
+              0.5408833996625617,
+              0.5560081997828092,
+              0.5275249997794162,
+              0.668966599914711
+            ]
+          },
+          "pr_ratio": 0.4904163613898432,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 512,
+          "width": 128,
+          "mps": {
+            "first_ms": 1.1474579987407196,
+            "median_ms": 0.515483200433664,
+            "p95_ms": 0.5893000001378823,
+            "samples_ms": [
+              0.5893000001378823,
+              0.5257833996438421,
+              0.5031749999034218,
+              0.5159416003152728,
+              0.5142583999258932,
+              0.504516799992416,
+              0.515483200433664,
+              0.5152915997314267,
+              0.5048833998444024,
+              0.5198833998292685,
+              0.5190417999983765,
+              0.5039249997935258,
+              0.5301166005665436,
+              0.5144167997059412,
+              0.5408584001997951
+            ]
+          },
+          "torch": {
+            "first_ms": 7.106875000317814,
+            "median_ms": 6.575299999531126,
+            "p95_ms": 6.6144418000476435,
+            "samples_ms": [
+              6.6090584004996344,
+              6.567358400207013,
+              6.574491599894827,
+              6.574308199924417,
+              6.569408199720783,
+              6.577166599890916,
+              6.573749999370193,
+              6.547641599900089,
+              6.582041799993021,
+              6.552416799968341,
+              6.585208400065312,
+              6.576825000229292,
+              6.575299999531126,
+              6.6144418000476435,
+              6.612274999497458
+            ]
+          },
+          "pr78": {
+            "first_ms": 0.9502080029051285,
+            "median_ms": 0.7034333997580688,
+            "p95_ms": 1.1172584003361408,
+            "samples_ms": [
+              0.6744668004103005,
+              0.7336000002396759,
+              0.8299499997519888,
+              0.7018165997578762,
+              0.7025999999314081,
+              0.6429667999327648,
+              0.7070499996189028,
+              0.7034333997580688,
+              0.6439581993618049,
+              0.7261165999807417,
+              0.7207916001789272,
+              0.6601667999348138,
+              0.7292665999557357,
+              1.1172584003361408,
+              0.6836084001406562
+            ]
+          },
+          "pr_ratio": 0.7328102427478617,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 2048,
+          "width": 128,
+          "mps": {
+            "first_ms": 2.0565410013659857,
+            "median_ms": 1.6018834001442883,
+            "p95_ms": 1.6555834001337644,
+            "samples_ms": [
+              1.6555834001337644,
+              1.600999999936903,
+              1.5993000000889879,
+              1.6148249997058883,
+              1.6223666003497783,
+              1.5888583999185357,
+              1.6396582002926152,
+              1.5953166002873331,
+              1.5944500002660789,
+              1.6190168003959116,
+              1.6018834001442883,
+              1.5768249999382533,
+              1.6071499994723126,
+              1.601233400288038,
+              1.611850000335835
+            ]
+          },
+          "torch": {
+            "first_ms": 25.27850000114995,
+            "median_ms": 25.046800000563962,
+            "p95_ms": 25.128449999465374,
+            "samples_ms": [
+              25.10610839963192,
+              25.000083399936557,
+              25.04667499961215,
+              25.128449999465374,
+              25.070224999944912,
+              25.046800000563962,
+              25.03548340027919,
+              25.070750000304542,
+              24.961491800058866,
+              25.022941600036575,
+              25.027766600396717,
+              25.093458400078816,
+              25.072841600194806,
+              25.07614999994985,
+              25.030625000363216
+            ]
+          },
+          "pr78": {
+            "first_ms": 4.44291600069846,
+            "median_ms": 1.8191082002886105,
+            "p95_ms": 2.240358400013065,
+            "samples_ms": [
+              1.8180666003900114,
+              1.8399499997030944,
+              1.8138415995053947,
+              1.8203166000603233,
+              1.8479165999451652,
+              1.7880500003229827,
+              1.8399666005279869,
+              1.8849166001018602,
+              2.240358400013065,
+              1.82847500036587,
+              1.8191082002886105,
+              1.8097749998560175,
+              1.810408400342567,
+              1.8168332004279364,
+              1.7948500004422385
+            ]
+          },
+          "pr_ratio": 0.8805872019543102,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 2,
+          "length": 512,
+          "width": 384,
+          "mps": {
+            "first_ms": 1.723042001685826,
+            "median_ms": 1.3118750001012813,
+            "p95_ms": 1.3719581998884678,
+            "samples_ms": [
+              1.3257665996206924,
+              1.2759749995893799,
+              1.3007415996980853,
+              1.3085582002531737,
+              1.324025000212714,
+              1.3033833994995803,
+              1.3719581998884678,
+              1.300383200577926,
+              1.3001999999687541,
+              1.3635999996040482,
+              1.3369915999646764,
+              1.3181750000512693,
+              1.323733400204219,
+              1.3005250002606772,
+              1.3118750001012813
+            ]
+          },
+          "torch": {
+            "first_ms": 19.33604200166883,
+            "median_ms": 19.03240840038052,
+            "p95_ms": 19.136983399948804,
+            "samples_ms": [
+              19.040866599971196,
+              19.04503339974326,
+              19.02147500004503,
+              18.997200000012526,
+              19.136833200172987,
+              19.04013320017839,
+              19.036158399831038,
+              18.979550000221934,
+              19.019924999884097,
+              19.136983399948804,
+              19.043333399895346,
+              19.028158400033135,
+              18.99924160024966,
+              18.968241599941393,
+              19.03240840038052
+            ]
+          },
+          "pr78": {
+            "first_ms": 1.7202500021085143,
+            "median_ms": 1.271558199368883,
+            "p95_ms": 1.6591166000580415,
+            "samples_ms": [
+              1.254583399713738,
+              1.2295584005187266,
+              1.2451165996026248,
+              1.6591166000580415,
+              1.335924999875715,
+              1.467341800162103,
+              1.2648165997234173,
+              1.5079083997989073,
+              1.238875000126427,
+              1.258774999587331,
+              1.271558199368883,
+              1.219966800272232,
+              1.2777333999110851,
+              1.6484500003571156,
+              1.2788499996531755
+            ]
+          },
+          "pr_ratio": 1.0317066106391426,
+          "pr_gate_pass": true
+        },
+        {
+          "batch": 1,
+          "length": 2048,
+          "width": 384,
+          "mps": {
+            "first_ms": 3.193957996700192,
+            "median_ms": 2.7617331994406413,
+            "p95_ms": 2.8385832003550604,
+            "samples_ms": [
+              2.8163166003650986,
+              2.7641499997116625,
+              2.758275000087451,
+              2.7889832002983894,
+              2.7501916003529914,
+              2.7350331998604815,
+              2.7693584001099225,
+              2.759775000595255,
+              2.746225000009872,
+              2.7880665998964105,
+              2.748816800158238,
+              2.7453668000816833,
+              2.8385832003550604,
+              2.8188333999423776,
+              2.7617331994406413
+            ]
+          },
+          "torch": {
+            "first_ms": 34.379708999040304,
+            "median_ms": 34.066683200217085,
+            "p95_ms": 34.11272500015912,
+            "samples_ms": [
+              34.07974159999867,
+              34.054216599906795,
+              34.08873340013088,
+              34.11272500015912,
+              34.06278340044082,
+              34.06396659993334,
+              34.041758199600736,
+              34.05591659975471,
+              34.066683200217085,
+              34.08159159953357,
+              34.09521659996244,
+              34.087008200003766,
+              34.061841599759646,
+              34.09051679991535,
+              34.020483199856244
+            ]
+          },
+          "pr78": {
+            "first_ms": 3.2510829987586476,
+            "median_ms": 2.7664665998599958,
+            "p95_ms": 3.317066599993268,
+            "samples_ms": [
+              3.1687167997006327,
+              2.766975000122329,
+              2.7730583999073133,
+              2.797133199783275,
+              2.755474999867147,
+              2.7576331995078363,
+              2.7664665998599958,
+              2.7707415996701457,
+              2.7171834000910167,
+              2.757166600349592,
+              2.75211659973138,
+              2.7517334005096927,
+              2.7999668003758416,
+              3.317066599993268,
+              2.7567750003072433
+            ]
+          },
+          "pr_ratio": 0.9982890086511097,
+          "pr_gate_pass": true
+        }
+      ]
+    },
+    "small-mps-generation": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-mps-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 800.9645410020312,
+            "median_ms": 263.01654200142366,
+            "p95_ms": 264.20800000050804,
+            "samples_ms": [
+              264.20800000050804,
+              260.78879199849325,
+              263.01654200142366
+            ],
+            "live_tensor_bytes": 48309760,
+            "driver_bytes_snapshot": 1101758464
+          },
+          "memory": {
+            "sampled_live_max_bytes": 51527936,
+            "sampled_driver_max_bytes": 1101758464,
+            "process_max_rss_bytes": 390447104,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 261.7521249994752,
+            "p95_ms": 277.8835419994721,
+            "samples_ms": [
+              261.69941699845367,
+              261.7521249994752,
+              277.8835419994721
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 285.5030419996183,
+            "median_ms": 272.59929200226907,
+            "p95_ms": 297.56341699976474,
+            "samples_ms": [
+              271.6004169997177,
+              272.59929200226907,
+              297.56341699976474
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1101774848
+          },
+          "memory": {
+            "sampled_live_max_bytes": 50658560,
+            "sampled_driver_max_bytes": 1101774848,
+            "process_max_rss_bytes": 402997248,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 263.8832500015269,
+            "p95_ms": 264.6941670027445,
+            "samples_ms": [
+              263.8832500015269,
+              264.6941670027445,
+              263.1120000005467
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 276.31012500205543,
+            "median_ms": 263.0430829995021,
+            "p95_ms": 264.56462499845657,
+            "samples_ms": [
+              264.56462499845657,
+              263.0430829995021,
+              260.9379999994417
+            ],
+            "live_tensor_bytes": 48325120,
+            "driver_bytes_snapshot": 1101791232
+          },
+          "memory": {
+            "sampled_live_max_bytes": 49723136,
+            "sampled_driver_max_bytes": 1101791232,
+            "process_max_rss_bytes": 418906112,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 265.54625000062515,
+            "p95_ms": 267.7910839993274,
+            "samples_ms": [
+              262.9484999997658,
+              267.7910839993274,
+              265.54625000062515
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "130m-transformer-generation": {
+      "args": {
+        "size": "130m",
+        "backend": "transformer",
+        "mode": "generation",
+        "dtype": "float32",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-transformer-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 128457216,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "29c0f98ba9c11a139ee2127f9b7fc117bdef4eded45bead75b3b8d67e0f05cc7",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 1254.8650420003469,
+            "median_ms": 926.4434579999943,
+            "p95_ms": 935.494958000163,
+            "samples_ms": [
+              922.8102910001326,
+              926.4434579999943,
+              935.494958000163
+            ],
+            "live_tensor_bytes": 564161536,
+            "driver_bytes_snapshot": 1328283648
+          },
+          "memory": {
+            "sampled_live_max_bytes": 624348928,
+            "sampled_driver_max_bytes": 1328283648,
+            "process_max_rss_bytes": 1109606400,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 904.5192089997727,
+            "p95_ms": 904.9532500002897,
+            "samples_ms": [
+              904.5192089997727,
+              904.9532500002897,
+              900.7558750008684
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 1208.1117910001922,
+            "median_ms": 1195.269959000143,
+            "p95_ms": 1200.585874999888,
+            "samples_ms": [
+              1189.7034579997126,
+              1195.269959000143,
+              1200.585874999888
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1118863360
+          },
+          "memory": {
+            "sampled_live_max_bytes": 695136000,
+            "sampled_driver_max_bytes": 1118863360,
+            "process_max_rss_bytes": 1109606400,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 1159.082875000422,
+            "p95_ms": 1160.6428750001214,
+            "samples_ms": [
+              1160.6428750001214,
+              1158.5243750005247,
+              1159.082875000422
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 2633.6880829994698,
+            "median_ms": 2618.023500000163,
+            "p95_ms": 2620.5019999997603,
+            "samples_ms": [
+              2620.5019999997603,
+              2618.023500000163,
+              2617.5703330000033
+            ],
+            "live_tensor_bytes": 564176896,
+            "driver_bytes_snapshot": 2574319616
+          },
+          "memory": {
+            "sampled_live_max_bytes": 1136699392,
+            "sampled_driver_max_bytes": 2574319616,
+            "process_max_rss_bytes": 1109606400,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 2379.252708000422,
+            "p95_ms": 2393.2937089994084,
+            "samples_ms": [
+              2393.2937089994084,
+              2369.582958999672,
+              2379.252708000422
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-mps-bf16-generation": {
+      "args": {
+        "size": "small",
+        "backend": "mps",
+        "mode": "generation",
+        "dtype": "bfloat16",
+        "lengths": [
+          128,
+          512,
+          2048
+        ],
+        "repeats": 3,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/small-mps-bf16-generation.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12077184,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 128,
+          "generation": {
+            "first_ms": 1099.6989580016816,
+            "median_ms": 505.0556670030346,
+            "p95_ms": 505.6722500012256,
+            "samples_ms": [
+              500.9561250008119,
+              505.0556670030346,
+              505.6722500012256
+            ],
+            "live_tensor_bytes": 48309760,
+            "driver_bytes_snapshot": 1101758464
+          },
+          "memory": {
+            "sampled_live_max_bytes": 58045184,
+            "sampled_driver_max_bytes": 1101758464,
+            "process_max_rss_bytes": 402063360,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 503.5457080011838,
+            "p95_ms": 505.90379200002644,
+            "samples_ms": [
+              501.39466600012383,
+              503.5457080011838,
+              505.90379200002644
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 512,
+          "generation": {
+            "first_ms": 529.7426670003915,
+            "median_ms": 508.6939579996397,
+            "p95_ms": 512.4135000005481,
+            "samples_ms": [
+              512.4135000005481,
+              508.6939579996397,
+              506.5220420001424
+            ],
+            "live_tensor_bytes": 48312832,
+            "driver_bytes_snapshot": 1110163456
+          },
+          "memory": {
+            "sampled_live_max_bytes": 56175872,
+            "sampled_driver_max_bytes": 1110163456,
+            "process_max_rss_bytes": 430899200,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 509.02050000149757,
+            "p95_ms": 512.1967910017702,
+            "samples_ms": [
+              504.08737499674316,
+              509.02050000149757,
+              512.1967910017702
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        },
+        {
+          "length": 2048,
+          "generation": {
+            "first_ms": 561.7127079967759,
+            "median_ms": 542.2575829979905,
+            "p95_ms": 542.2785000009753,
+            "samples_ms": [
+              542.2575829979905,
+              530.797708001046,
+              542.2785000009753
+            ],
+            "live_tensor_bytes": 48325120,
+            "driver_bytes_snapshot": 1101791232
+          },
+          "memory": {
+            "sampled_live_max_bytes": 58418944,
+            "sampled_driver_max_bytes": 1101791232,
+            "process_max_rss_bytes": 454492160,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          },
+          "decode": {
+            "median_ms": 524.3794160014659,
+            "p95_ms": 527.2070410028391,
+            "samples_ms": [
+              519.5513749968086,
+              527.2070410028391,
+              524.3794160014659
+            ],
+            "generated_tokens": 256,
+            "recurrent_updates": 255,
+            "description": "Prefill excluded; includes selection of the first token and subsequent cached updates"
+          }
+        }
+      ]
+    },
+    "small-transformer-speed": {
+      "args": {
+        "size": "small",
+        "backend": "transformer",
+        "mode": "speed",
+        "dtype": "float32",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "output": "benchmark-results/small-transformer-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 12214272,
+      "reference_mamba_parameters": 12077184,
+      "tied_embeddings": false,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "1f5e256131d75616c3b6afdd81c9fc8ca86315a41cce9cdfafe7d7cd7659d460",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 588.3025419998376,
+            "median_ms": 4.235430666691779,
+            "p95_ms": 4.262291666843036,
+            "samples_ms": [
+              4.235430666691779,
+              4.164194666676242,
+              4.173944333160762,
+              4.250110999843552,
+              4.262291666843036
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1114636288
+          },
+          "prefill": {
+            "first_ms": 6.160416999591689,
+            "median_ms": 3.8699860000027306,
+            "p95_ms": 3.9433609999832697,
+            "samples_ms": [
+              3.8699860000027306,
+              3.8353749999563056,
+              3.887416666657373,
+              3.9433609999832697,
+              3.8621529999242434
+            ],
+            "live_tensor_bytes": 74027008,
+            "driver_bytes_snapshot": 1131397120
+          },
+          "forward_backward": {
+            "first_ms": 793.3156250001048,
+            "median_ms": 13.413874999969266,
+            "p95_ms": 13.759749999735504,
+            "samples_ms": [
+              13.759749999735504,
+              13.413874999969266,
+              13.487082999745326,
+              13.358707999941544,
+              13.255792000563815
+            ],
+            "live_tensor_bytes": 187057664,
+            "driver_bytes_snapshot": 1211154432
+          },
+          "training": {
+            "first_ms": 44.375292000040645,
+            "median_ms": 17.558749999807333,
+            "p95_ms": 18.171792000430287,
+            "samples_ms": [
+              17.558749999807333,
+              17.410041000402998,
+              18.171792000430287,
+              17.500916999779292,
+              17.67812500020227
+            ],
+            "live_tensor_bytes": 341877760,
+            "driver_bytes_snapshot": 1253097472
+          },
+          "memory": {
+            "sampled_live_max_bytes": 361803264,
+            "sampled_driver_max_bytes": 1253097472,
+            "process_max_rss_bytes": 518078464,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 74.67108299988467,
+            "median_ms": 36.927041666785954,
+            "p95_ms": 37.33394433341649,
+            "samples_ms": [
+              37.33394433341649,
+              37.0113333331877,
+              36.84152799996809,
+              36.927041666785954,
+              36.763944333263986
+            ],
+            "live_tensor_bytes": 74825728,
+            "driver_bytes_snapshot": 1341210624
+          },
+          "prefill": {
+            "first_ms": 35.64737500073534,
+            "median_ms": 35.109583333299575,
+            "p95_ms": 35.38018066653118,
+            "samples_ms": [
+              35.02887500023159,
+              35.38018066653118,
+              35.073402666663846,
+              35.109583333299575,
+              35.24069433327289
+            ],
+            "live_tensor_bytes": 74825728,
+            "driver_bytes_snapshot": 1349599232
+          },
+          "forward_backward": {
+            "first_ms": 223.72554100002162,
+            "median_ms": 99.50424999988172,
+            "p95_ms": 100.50991699972656,
+            "samples_ms": [
+              100.50991699972656,
+              99.71058300016011,
+              99.50424999988172,
+              98.11283299950446,
+              98.27470799973526
+            ],
+            "live_tensor_bytes": 158835200,
+            "driver_bytes_snapshot": 2461155328
+          },
+          "training": {
+            "first_ms": 102.51495800002886,
+            "median_ms": 102.41312499965716,
+            "p95_ms": 103.1547500006127,
+            "samples_ms": [
+              102.54629200062482,
+              103.1547500006127,
+              102.41312499965716,
+              102.28900000038266,
+              102.25708300004044
+            ],
+            "live_tensor_bytes": 290647040,
+            "driver_bytes_snapshot": 2480029696
+          },
+          "memory": {
+            "sampled_live_max_bytes": 624682240,
+            "sampled_driver_max_bytes": 2480029696,
+            "process_max_rss_bytes": 558612480,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    },
+    "130m-transformer-bf16-speed": {
+      "args": {
+        "size": "130m",
+        "backend": "transformer",
+        "mode": "speed",
+        "dtype": "bfloat16",
+        "lengths": [
+          512,
+          2048
+        ],
+        "repeats": 5,
+        "tokens": 256,
+        "uncached": false,
+        "sustain_seconds": 0,
+        "output": "benchmark-results/130m-transformer-bf16-speed.json"
+      },
+      "torch": "2.11.0",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "parameters": 128457216,
+      "reference_mamba_parameters": 129135360,
+      "tied_embeddings": true,
+      "commit": "88d5774bd7786a37a619718772e756b00ef3709b",
+      "diff_sha256": "b2d7819495b4a1c0977ca48cd4b86824b942e06dcd819697becb89e15fb3df03",
+      "rows": [
+        {
+          "length": 512,
+          "forward": {
+            "first_ms": 124.6917089993076,
+            "median_ms": 45.60645833286495,
+            "p95_ms": 45.736986332485685,
+            "samples_ms": [
+              45.5895833329123,
+              45.736986332485685,
+              45.56531966712404,
+              45.68936099894927,
+              45.60645833286495
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1110425600
+          },
+          "prefill": {
+            "first_ms": 39.55295899868361,
+            "median_ms": 39.23979166696275,
+            "p95_ms": 39.41494466683556,
+            "samples_ms": [
+              39.090347000941016,
+              39.23979166696275,
+              39.1088890003933,
+              39.41494466683556,
+              39.25800000070012
+            ],
+            "live_tensor_bytes": 564164608,
+            "driver_bytes_snapshot": 1160757248
+          },
+          "forward_backward": {
+            "first_ms": 174.16270800094935,
+            "median_ms": 147.5925000013376,
+            "p95_ms": 147.85166700312402,
+            "samples_ms": [
+              147.62899999914225,
+              147.3794999983511,
+              147.5925000013376,
+              147.85166700312402,
+              147.58995800002594
+            ],
+            "live_tensor_bytes": 1434632192,
+            "driver_bytes_snapshot": 3752181760
+          },
+          "training": {
+            "first_ms": 194.13254199753283,
+            "median_ms": 187.7107079999405,
+            "p95_ms": 188.1195829992066,
+            "samples_ms": [
+              187.51275000249734,
+              187.7107079999405,
+              188.1195829992066,
+              187.92150000081165,
+              187.6399169996148
+            ],
+            "live_tensor_bytes": 2632741376,
+            "driver_bytes_snapshot": 4876255232
+          },
+          "memory": {
+            "sampled_live_max_bytes": 2923551488,
+            "sampled_driver_max_bytes": 4876255232,
+            "process_max_rss_bytes": 1110212608,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        },
+        {
+          "length": 2048,
+          "forward": {
+            "first_ms": 369.2263750017446,
+            "median_ms": 349.7608056665437,
+            "p95_ms": 350.8316529999623,
+            "samples_ms": [
+              349.7608056665437,
+              350.8316529999623,
+              349.81455533367506,
+              349.58916666679823,
+              349.68031933385646
+            ],
+            "live_tensor_bytes": 564181504,
+            "driver_bytes_snapshot": 1646673920
+          },
+          "prefill": {
+            "first_ms": 325.37016599962953,
+            "median_ms": 324.49934699980076,
+            "p95_ms": 324.83298599981936,
+            "samples_ms": [
+              324.33379166711046,
+              324.49934699980076,
+              324.806722333354,
+              324.83298599981936,
+              324.4468333335438
+            ],
+            "live_tensor_bytes": 564181504,
+            "driver_bytes_snapshot": 1655062528
+          },
+          "forward_backward": {
+            "first_ms": 985.9466249981779,
+            "median_ms": 945.1367920009943,
+            "p95_ms": 945.5917499981297,
+            "samples_ms": [
+              945.5917499981297,
+              943.9376250011264,
+              945.5290000005334,
+              945.1367920009943,
+              944.0898329994525
+            ],
+            "live_tensor_bytes": 1225434624,
+            "driver_bytes_snapshot": 10620780544
+          },
+          "training": {
+            "first_ms": 991.3384589999623,
+            "median_ms": 984.547209001903,
+            "p95_ms": 990.8204160019523,
+            "samples_ms": [
+              984.547209001903,
+              985.320125000726,
+              990.8204160019523,
+              984.1092089991434,
+              984.1658749974158
+            ],
+            "live_tensor_bytes": 2652487936,
+            "driver_bytes_snapshot": 12768264192
+          },
+          "memory": {
+            "sampled_live_max_bytes": 10011357184,
+            "sampled_driver_max_bytes": 12768264192,
+            "process_max_rss_bytes": 1268809728,
+            "sampling_interval_ms": 5,
+            "method": "sampled lower bound; allocator limited to 16 GiB; RSS overlaps unified GPU memory"
+          }
+        }
+      ]
+    }
+  },
+  "diagnostics": {
+    "tuning": [
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 1.0787920000439044,
+        "backward_ms": 2.303500001289649
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.5621249983960297,
+        "backward_ms": 1.065124997694511
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.539540997124277,
+        "backward_ms": 1.024125002004439
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 0.7592909969389439,
+        "backward_ms": 2.3634579993085936
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.8887079966370948,
+        "backward_ms": 1.7549160002090503
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.7494579986087047,
+        "backward_ms": 1.8101669993484393
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 2.014165998843964,
+        "backward_ms": 5.4279169999063015
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 2.033042001130525,
+        "backward_ms": 5.657000001519918
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 2.027624999755062,
+        "backward_ms": 5.897666000237223
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 1.8708749994402751,
+        "backward_ms": 4.8920829976850655
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 1.9065000014961697,
+        "backward_ms": 4.921291998471133
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 1.9142500023008324,
+        "backward_ms": 5.141833000379847
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 3.1869159975030925,
+        "backward_ms": 8.925791997171473
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 3.224833999411203,
+        "backward_ms": 9.217749997333158
+      },
+      {
+        "dtype": "torch.float32",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 3.296292001323309,
+        "backward_ms": 9.56183400194277
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 0.6713750008202624,
+        "backward_ms": 1.3544169996748678
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.6153329995868262,
+        "backward_ms": 1.4668340008938685
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.6397500001185108,
+        "backward_ms": 1.3561660016421229
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 0.8644160006952006,
+        "backward_ms": 1.9628340014605783
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.8767079998506233,
+        "backward_ms": 1.994916998228291
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.8838329995342065,
+        "backward_ms": 2.002458000788465
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 2.036709000094561,
+        "backward_ms": 5.273750000924338
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 1.9644589992822148,
+        "backward_ms": 5.496917001437396
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 1.9585840018407907,
+        "backward_ms": 5.662833998940187
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 1.8302919997950085,
+        "backward_ms": 4.751542001031339
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 1.8301669988431968,
+        "backward_ms": 4.79533299949253
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 1.8235419993288815,
+        "backward_ms": 4.965000000083819
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 3.096833999734372,
+        "backward_ms": 8.547457997337915
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 3.090958998654969,
+        "backward_ms": 8.797165999567369
+      },
+      {
+        "dtype": "torch.float16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 3.0654580004920717,
+        "backward_ms": 9.17045900132507
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 0.5266250009299256,
+        "backward_ms": 1.5353750022768509
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.5913340028200764,
+        "backward_ms": 1.3261249987408519
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.5293750000419095,
+        "backward_ms": 1.338666999799898
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 0.8869170014804695,
+        "backward_ms": 1.8716250015131664
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 0.8519579969288316,
+        "backward_ms": 1.907333000417566
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 0.8767499966779724,
+        "backward_ms": 1.9927500034100376
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 64,
+        "training_forward_ms": 1.9847920011670794,
+        "backward_ms": 5.264458999590715
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 128,
+        "training_forward_ms": 1.9636249999166466,
+        "backward_ms": 5.451082997751655
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "chunk": 256,
+        "training_forward_ms": 1.930624999658903,
+        "backward_ms": 5.614541998511413
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 1.8013330009125639,
+        "backward_ms": 4.696459000115283
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 1.7938330020115245,
+        "backward_ms": 4.759542000101646
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 1.8429170013405383,
+        "backward_ms": 4.946707998897182
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 64,
+        "training_forward_ms": 3.084625001065433,
+        "backward_ms": 8.61724999776925
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 128,
+        "training_forward_ms": 3.0794580015935935,
+        "backward_ms": 8.785041001829086
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "chunk": 256,
+        "training_forward_ms": 3.075249998801155,
+        "backward_ms": 9.109458998864284
+      }
+    ],
+    "compilation": [
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 64,
+        "dtype": "torch.float32",
+        "library_ms": 1.4767089996894356,
+        "compile_ms": 2.5749589985935017
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 128,
+        "dtype": "torch.float32",
+        "library_ms": 0.2774170025077183,
+        "compile_ms": 0.4722920020867605
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 256,
+        "dtype": "torch.float32",
+        "library_ms": 0.2393750000919681,
+        "compile_ms": 0.4272500009392388
+      },
+      {
+        "operator": "convolution",
+        "dtype": "torch.float32",
+        "library_ms": 0.11900000026798807,
+        "compile_ms": 0.29229200299596414
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 64,
+        "dtype": "torch.float16",
+        "library_ms": 0.31512499845121056,
+        "compile_ms": 0.6240420007088687
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 128,
+        "dtype": "torch.float16",
+        "library_ms": 0.29224999889265746,
+        "compile_ms": 0.46300000030896626
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 256,
+        "dtype": "torch.float16",
+        "library_ms": 0.2332499971089419,
+        "compile_ms": 0.3958329980378039
+      },
+      {
+        "operator": "convolution",
+        "dtype": "torch.float16",
+        "library_ms": 0.09408299956703559,
+        "compile_ms": 0.18816699957824312
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 64,
+        "dtype": "torch.bfloat16",
+        "library_ms": 0.2209999984188471,
+        "compile_ms": 0.3924169977835845
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 128,
+        "dtype": "torch.bfloat16",
+        "library_ms": 0.23733299894956872,
+        "compile_ms": 0.3953750019718427
+      },
+      {
+        "operator": "scan",
+        "state_capacity": 16,
+        "chunk": 256,
+        "dtype": "torch.bfloat16",
+        "library_ms": 0.22104199888417497,
+        "compile_ms": 0.39149999793153256
+      },
+      {
+        "operator": "convolution",
+        "dtype": "torch.bfloat16",
+        "library_ms": 0.07424999785143882,
+        "compile_ms": 0.15595799777656794
+      }
+    ],
+    "convolution": [
+      {
+        "length": 64,
+        "False_forward": 0.5170624997845152,
+        "False_training": 2.2052919994166587,
+        "True_forward": 0.2727041002799524,
+        "True_training": 0.9811040017666528
+      },
+      {
+        "length": 512,
+        "False_forward": 0.5600249998678919,
+        "False_training": 1.7669584976829356,
+        "True_forward": 0.5085373999463627,
+        "True_training": 1.930208500198205
+      },
+      {
+        "length": 2048,
+        "False_forward": 1.712625000072876,
+        "False_training": 5.455353999423096,
+        "True_forward": 1.6198583001823863,
+        "True_training": 6.200708499818575
+      }
+    ],
+    "groups": [
+      {
+        "batch": 2,
+        "length": 64,
+        "width": 128,
+        "64": {
+          "first_ms": 384.1127499981667,
+          "median_ms": 0.2611833995615598,
+          "p95_ms": 0.30292500014184043,
+          "samples_ms": [
+            0.30292500014184043,
+            0.2623334003146738,
+            0.2594999998109415,
+            0.257041599979857,
+            0.26765000002342276,
+            0.2657083998201415,
+            0.2657917997566983,
+            0.2611833995615598,
+            0.2556833998824004,
+            0.2620667997689452,
+            0.26104999997187406,
+            0.25792499945964664,
+            0.2577249993919395,
+            0.2607665999676101,
+            0.2621500003442634
+          ]
+        },
+        "128": {
+          "first_ms": 1.4472499969997443,
+          "median_ms": 0.26729160017566755,
+          "p95_ms": 0.31954160003806464,
+          "samples_ms": [
+            0.27170000030309893,
+            0.2737000002525747,
+            0.26123339994228445,
+            0.31954160003806464,
+            0.2710000000661239,
+            0.27273340019746684,
+            0.29284160045790486,
+            0.26625820028129965,
+            0.26618319971021265,
+            0.26346660015406087,
+            0.2665750005689915,
+            0.28552500007208437,
+            0.26320000033592805,
+            0.26729160017566755,
+            0.262799999472918
+          ]
+        },
+        "256": {
+          "first_ms": 1.1453330007498153,
+          "median_ms": 0.26384999946458265,
+          "p95_ms": 0.30579180020140484,
+          "samples_ms": [
+            0.2790833998005837,
+            0.30579180020140484,
+            0.2592917997390032,
+            0.2724499994656071,
+            0.2581084001576528,
+            0.257949999650009,
+            0.2649750000273343,
+            0.26384999946458265,
+            0.2679165998415556,
+            0.26007499982370064,
+            0.2577499995823018,
+            0.2682665995962452,
+            0.2661915998032782,
+            0.26221660009468906,
+            0.25849180019577034
+          ]
+        },
+        "512": {
+          "first_ms": 1.0694169977796264,
+          "median_ms": 0.2674834002391435,
+          "p95_ms": 0.2824165996571537,
+          "samples_ms": [
+            0.2824165996571537,
+            0.27591660036705434,
+            0.26454160033608787,
+            0.2547500000218861,
+            0.2692418005608488,
+            0.27489999993122183,
+            0.27834159991471097,
+            0.26559999969322234,
+            0.2590500000223983,
+            0.27170819957973436,
+            0.26410840000608005,
+            0.2674834002391435,
+            0.2585916001407895,
+            0.25795819965424016,
+            0.2682083999388851
+          ]
+        },
+        "1024": {
+          "first_ms": 1.2452910013962537,
+          "median_ms": 0.2673584000149276,
+          "p95_ms": 0.3028500002983492,
+          "samples_ms": [
+            0.28837499994551763,
+            0.27974999975413084,
+            0.26582499995129183,
+            0.25605820046621375,
+            0.28514999939943664,
+            0.2608334005344659,
+            0.25809180006035604,
+            0.2648581998073496,
+            0.26610820059431717,
+            0.3028500002983492,
+            0.26154180013691075,
+            0.2882416003558319,
+            0.2673584000149276,
+            0.26792499993462116,
+            0.2707749998080544
+          ]
+        }
+      },
+      {
+        "batch": 2,
+        "length": 512,
+        "width": 128,
+        "64": {
+          "first_ms": 9.387166999658803,
+          "median_ms": 0.532050000037998,
+          "p95_ms": 0.560508399939863,
+          "samples_ms": [
+            0.5063999997219071,
+            0.5040249998273794,
+            0.5184916000871453,
+            0.5098082001495641,
+            0.532050000037998,
+            0.5093250001664273,
+            0.5489416005730163,
+            0.523925000015879,
+            0.5285582003125455,
+            0.5485333997057751,
+            0.544225000339793,
+            0.560508399939863,
+            0.5527250003069639,
+            0.5489584000315517,
+            0.5557249998673797
+          ]
+        },
+        "128": {
+          "first_ms": 0.9035830007633194,
+          "median_ms": 0.53529159995378,
+          "p95_ms": 0.558366600307636,
+          "samples_ms": [
+            0.5435749997559469,
+            0.53529159995378,
+            0.5391165999753866,
+            0.5067250000138301,
+            0.5171668002731167,
+            0.5032918001234066,
+            0.5304334001266398,
+            0.5331749998731539,
+            0.5388334000599571,
+            0.5381249997299165,
+            0.5153083999175578,
+            0.5302165998728015,
+            0.5538666002394166,
+            0.558366600307636,
+            0.547583399747964
+          ]
+        },
+        "256": {
+          "first_ms": 0.8199170006264467,
+          "median_ms": 0.5295417999150231,
+          "p95_ms": 0.5634667999402154,
+          "samples_ms": [
+            0.5023249999794643,
+            0.5004250000638422,
+            0.5119333996844944,
+            0.5208834001678042,
+            0.5072915999335237,
+            0.5483249995450024,
+            0.534033399890177,
+            0.5189581999729853,
+            0.5239750003966037,
+            0.5624750003335066,
+            0.5388834004406817,
+            0.5295417999150231,
+            0.5586334002146032,
+            0.5357834001188166,
+            0.5634667999402154
+          ]
+        },
+        "512": {
+          "first_ms": 0.8089999973890372,
+          "median_ms": 0.528183400456328,
+          "p95_ms": 0.5468832001497503,
+          "samples_ms": [
+            0.5022750003263354,
+            0.48955820020637475,
+            0.5164583999430761,
+            0.5237083998508751,
+            0.5122249996929895,
+            0.5157915999006946,
+            0.5342584001482464,
+            0.528183400456328,
+            0.5448165997222532,
+            0.5360250004741829,
+            0.5407081996963825,
+            0.5468832001497503,
+            0.5093831998237874,
+            0.5391999999119435,
+            0.5414334002125543
+          ]
+        },
+        "1024": {
+          "first_ms": 0.7709580022492446,
+          "median_ms": 0.5237165998551063,
+          "p95_ms": 0.5530668000574224,
+          "samples_ms": [
+            0.5032331995607819,
+            0.5097918001411017,
+            0.5030499996792059,
+            0.5042165998020209,
+            0.5047416001616511,
+            0.5227665998972952,
+            0.530599999910919,
+            0.5237165998551063,
+            0.5300000004353933,
+            0.5092418003187049,
+            0.5444415997772012,
+            0.5300333999912255,
+            0.5530668000574224,
+            0.5327083999873139,
+            0.5480915999214631
+          ]
+        }
+      },
+      {
+        "batch": 2,
+        "length": 2048,
+        "width": 128,
+        "64": {
+          "first_ms": 10.710750000725966,
+          "median_ms": 1.5748083998914808,
+          "p95_ms": 1.626725000096485,
+          "samples_ms": [
+            1.626725000096485,
+            1.5385416001663543,
+            1.5471165999770164,
+            1.5724500000942498,
+            1.5713084001617972,
+            1.5748083998914808,
+            1.5870750001340639,
+            1.593666600092547,
+            1.5804417998879217,
+            1.5799416003574152,
+            1.5629916000762023,
+            1.5865665998717304,
+            1.5780417998030316,
+            1.562950000516139,
+            1.5641584002878517
+          ]
+        },
+        "128": {
+          "first_ms": 2.0152500001131557,
+          "median_ms": 1.5635833995474968,
+          "p95_ms": 1.5983083998435177,
+          "samples_ms": [
+            1.5381334000267088,
+            1.529350000055274,
+            1.5756499997223727,
+            1.55922499980079,
+            1.550883400341263,
+            1.5600749997247476,
+            1.5795500003150664,
+            1.5746918004879262,
+            1.574024999717949,
+            1.56103340050322,
+            1.5635833995474968,
+            1.5863499997067265,
+            1.5516500003286637,
+            1.5983083998435177,
+            1.5892499999608845
+          ]
+        },
+        "256": {
+          "first_ms": 1.9411670000408776,
+          "median_ms": 1.576491799642099,
+          "p95_ms": 1.5931167996313889,
+          "samples_ms": [
+            1.5856499994697515,
+            1.5698666000389494,
+            1.543691600090824,
+            1.5806333998625632,
+            1.5886667999438941,
+            1.584466599888401,
+            1.576491799642099,
+            1.5650000001187436,
+            1.5931167996313889,
+            1.5722000003734138,
+            1.5452250001544598,
+            1.5722584001196083,
+            1.5807581999979448,
+            1.5618500001437496,
+            1.5900833997875452
+          ]
+        },
+        "512": {
+          "first_ms": 1.932457998918835,
+          "median_ms": 1.584908400400309,
+          "p95_ms": 1.6003915996407159,
+          "samples_ms": [
+            1.540441800170811,
+            1.5386916005809326,
+            1.5650083994842134,
+            1.5891168004600331,
+            1.5732334002677817,
+            1.57965000034892,
+            1.6003915996407159,
+            1.5926999993098434,
+            1.5856500001973473,
+            1.5975168003933504,
+            1.584908400400309,
+            1.5769834004458971,
+            1.598016600473784,
+            1.5721750001830515,
+            1.5887499997916166
+          ]
+        },
+        "1024": {
+          "first_ms": 1.9034169999940787,
+          "median_ms": 1.5862082000239752,
+          "p95_ms": 1.6063000002759509,
+          "samples_ms": [
+            1.5877249999903142,
+            1.5750583996123169,
+            1.5418165996379685,
+            1.5862082000239752,
+            1.6002584001398645,
+            1.590758399834158,
+            1.589425000565825,
+            1.5678834002756048,
+            1.589599999715574,
+            1.5741083996545058,
+            1.5430499996000435,
+            1.5829750002012588,
+            1.573699999426026,
+            1.6063000002759509,
+            1.598175000253832
+          ]
+        }
+      },
+      {
+        "batch": 2,
+        "length": 512,
+        "width": 384,
+        "64": {
+          "first_ms": 10.695416996895801,
+          "median_ms": 1.284950000263052,
+          "p95_ms": 1.343250000354601,
+          "samples_ms": [
+            1.343250000354601,
+            1.2895583997305948,
+            1.304483200510731,
+            1.2804081998183392,
+            1.281433399708476,
+            1.3138250003976282,
+            1.284950000263052,
+            1.2904165996587835,
+            1.2734666001051664,
+            1.2756582000292838,
+            1.281474999996135,
+            1.2831418003770523,
+            1.2881834001746029,
+            1.2783416001184378,
+            1.304149999486981
+          ]
+        },
+        "128": {
+          "first_ms": 1.6963750022114255,
+          "median_ms": 1.3035668001975864,
+          "p95_ms": 1.3265583998872899,
+          "samples_ms": [
+            1.2840084003983065,
+            1.3265583998872899,
+            1.2967334005224984,
+            1.296899999579182,
+            1.3035668001975864,
+            1.307749999978114,
+            1.2952331999258604,
+            1.307308200193802,
+            1.3008331996388733,
+            1.3063665996014606,
+            1.3244250003481284,
+            1.297974999761209,
+            1.3058584001555573,
+            1.311458400596166,
+            1.3027416003751568
+          ]
+        },
+        "256": {
+          "first_ms": 1.5823339999769814,
+          "median_ms": 1.2963250002940185,
+          "p95_ms": 1.309308400232112,
+          "samples_ms": [
+            1.3036084004852455,
+            1.2879750000138301,
+            1.302025000040885,
+            1.2799500000255648,
+            1.2993083997571375,
+            1.2974833996850066,
+            1.2963250002940185,
+            1.305741800024407,
+            1.2914331993670203,
+            1.2728834000881761,
+            1.292575000115903,
+            1.2649334006709978,
+            1.2983833999896888,
+            1.2930833996506408,
+            1.309308400232112
+          ]
+        },
+        "512": {
+          "first_ms": 1.6729160015529487,
+          "median_ms": 1.302683399990201,
+          "p95_ms": 1.3383500001509674,
+          "samples_ms": [
+            1.2886750002508052,
+            1.3159000001905952,
+            1.2825416000850964,
+            1.288541800022358,
+            1.2962331995368004,
+            1.3383500001509674,
+            1.2965333997271955,
+            1.310708199889632,
+            1.302683399990201,
+            1.2909915996715426,
+            1.3178415996662807,
+            1.288524999836227,
+            1.3156916000298224,
+            1.309233399661025,
+            1.3037750002695248
+          ]
+        },
+        "1024": {
+          "first_ms": 1.6205829997488763,
+          "median_ms": 1.371133400243707,
+          "p95_ms": 1.388016599958064,
+          "samples_ms": [
+            1.388016599958064,
+            1.371133400243707,
+            1.3817999999446329,
+            1.3634417999128345,
+            1.385774999653222,
+            1.3676834001671523,
+            1.3812750003125984,
+            1.362641799642006,
+            1.3723249998292886,
+            1.3799166001263075,
+            1.362616600090405,
+            1.3803168003505562,
+            1.3685749996511731,
+            1.3709749997360632,
+            1.3625668005261105
+          ]
+        }
+      },
+      {
+        "batch": 1,
+        "length": 2048,
+        "width": 384,
+        "64": {
+          "first_ms": 11.29758300157846,
+          "median_ms": 2.7638250001473352,
+          "p95_ms": 2.832458399643656,
+          "samples_ms": [
+            2.832458399643656,
+            2.776066600199556,
+            2.7638250001473352,
+            2.7575918000366073,
+            2.7586666001298,
+            2.747974999510916,
+            2.768524999555666,
+            2.7717750002921093,
+            2.7731916001357604,
+            2.760850000049686,
+            2.776599999924656,
+            2.754149999964284,
+            2.7757666000979953,
+            2.7418917998147663,
+            2.759574999799952
+          ]
+        },
+        "128": {
+          "first_ms": 3.1240409989550244,
+          "median_ms": 2.7490918000694364,
+          "p95_ms": 2.779416600242257,
+          "samples_ms": [
+            2.7478418000100646,
+            2.728508199652424,
+            2.755441599583719,
+            2.743699999700766,
+            2.750516800006153,
+            2.755849999812199,
+            2.7622000001429114,
+            2.779416600242257,
+            2.7373165998142213,
+            2.762349999829894,
+            2.7453750000859145,
+            2.7353833997040056,
+            2.7670581999700516,
+            2.743866600212641,
+            2.7490918000694364
+          ]
+        },
+        "256": {
+          "first_ms": 3.01229100296041,
+          "median_ms": 2.7442250000603963,
+          "p95_ms": 2.8133831998275127,
+          "samples_ms": [
+            2.7738582000893075,
+            2.755316800175933,
+            2.7442250000603963,
+            2.7218582006753422,
+            2.7500249998411164,
+            2.749374999984866,
+            2.727658399817301,
+            2.7412167997681536,
+            2.74285840059747,
+            2.8133831998275127,
+            2.7459583994641434,
+            2.750174999528099,
+            2.7396249999583233,
+            2.731983199919341,
+            2.7363333996618167
+          ]
+        },
+        "512": {
+          "first_ms": 3.180792002240196,
+          "median_ms": 2.8057333998731337,
+          "p95_ms": 2.9116249999788124,
+          "samples_ms": [
+            2.817883199895732,
+            2.792849999968894,
+            2.796158399723936,
+            2.8066999999282416,
+            2.8007416003674734,
+            2.810999999928754,
+            2.8185999995912425,
+            2.789475000463426,
+            2.806550000241259,
+            2.7825416000268888,
+            2.8057333998731337,
+            2.9116249999788124,
+            2.784225000505103,
+            2.7977833997283597,
+            2.8116581997892354
+          ]
+        },
+        "1024": {
+          "first_ms": 3.09541599926888,
+          "median_ms": 2.7865584001119714,
+          "p95_ms": 2.8206500006490387,
+          "samples_ms": [
+            2.79690000024857,
+            2.8206500006490387,
+            2.77787500017439,
+            2.8149334000772797,
+            2.7921999993850477,
+            2.785866799968062,
+            2.7853999999933876,
+            2.7833918000396807,
+            2.7829665996250696,
+            2.7865584001119714,
+            2.7924665999307763,
+            2.791024999896763,
+            2.785299999959534,
+            2.8010084002744406,
+            2.7839999995194376
+          ]
+        }
+      }
+    ],
+    "long-sequence": [
+      {
+        "batch": 2,
+        "length": 8192,
+        "width": 128,
+        "backend": "mps",
+        "forward": {
+          "first_ms": 492.415249998885,
+          "median_ms": 6.427042000723304,
+          "p95_ms": 6.446999999752734,
+          "samples_ms": [
+            6.339624997053761,
+            6.427042000723304,
+            6.446999999752734,
+            6.426750001992332,
+            6.4466670010006055
+          ],
+          "live_tensor_bytes": 8855040,
+          "driver_bytes_snapshot": 1124843520
+        },
+        "forward_backward": {
+          "first_ms": 250.29524999990826,
+          "median_ms": 76.88591600162908,
+          "p95_ms": 77.39745800063247,
+          "samples_ms": [
+            76.91470799909439,
+            77.39745800063247,
+            76.88591600162908,
+            76.73441700171679,
+            76.7113750007411
+          ],
+          "live_tensor_bytes": 13279744,
+          "driver_bytes_snapshot": 1135476736
+        }
+      },
+      {
+        "batch": 2,
+        "length": 8192,
+        "width": 128,
+        "backend": "torch",
+        "forward": {
+          "first_ms": 145.24674999847775,
+          "median_ms": 99.26570800234913,
+          "p95_ms": 99.31866700208047,
+          "samples_ms": [
+            99.26570799871115,
+            99.31866700208047,
+            99.30091700152843,
+            99.26570800234913,
+            99.15970799920615
+          ],
+          "live_tensor_bytes": 8855040,
+          "driver_bytes_snapshot": 2200829952
+        },
+        "forward_backward": {
+          "first_ms": 258.2586659991648,
+          "median_ms": 258.10120800088043,
+          "p95_ms": 258.1802079985209,
+          "samples_ms": [
+            258.10966700009885,
+            258.1802079985209,
+            258.0165000035777,
+            258.10120800088043,
+            257.90062499800115
+          ],
+          "live_tensor_bytes": 12731904,
+          "driver_bytes_snapshot": 3282993152
+        }
+      }
+    ]
+  },
+  "source_sha256": {
+    "benchmarks/acceptance.py": "4fb6f9285ba65fb8c90640bd4363bad5ec1844b8b60124fd4ccf75032542eea8",
+    "benchmarks/blocks.py": "2b04d815da098602655abf224f338abbb7898afc0eb32b342186e89afdf63c17",
+    "benchmarks/compile.py": "96da712e896804526509277901c04342022db99aee0f48cc992fa05e3f4e4b50",
+    "benchmarks/conv.py": "40dfa0c55cc586f44b1fef546ce3980ee20d7a789b0df26f10408e9ac6892cf9",
+    "benchmarks/groups.py": "c4a10fe39c96e700c885b34eb74b9ab9ea670eb978971039da731ca6a1cc4e48",
+    "benchmarks/inference.py": "0affe9980247384d06f96c49fc668999226331397e7f96530a1737cd4eabd708",
+    "benchmarks/long_sequence.py": "a7d947b23c50b751b4cb6697ed1c32b21efbffac4f4caf29558a9a432109455d",
+    "benchmarks/mps.py": "56282149f63f0ad5480ef4790a8e6f84a661accc4701cde44f31fef8854f4306",
+    "benchmarks/profile_ops.py": "a9cdb939becbec9d412f4ddf0855e29f6fbf1a873f816c9cde7cdf5abd57ef44",
+    "benchmarks/report.py": "d8fa2fee16b8509df438b8b498ab563b6fef6ad0ede7ba0ecaf41dd628ff0061",
+    "benchmarks/transformer.py": "3fb156003cda3ee7896fec2ecb23beb5bafdfb7f385ba3a65eb39d6d2bbb0c52",
+    "benchmarks/tune.py": "5b2936b942f08b45f16adb48ca78cf5b2b0c7cc8432f11e41aaff50d2f0a2964",
+    "mambapy/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mambapy/checkpointing.py": "ceacd082d6fa4bf3460490dd29e07a1ea93c150c875fcdf14c2849d6d340c556",
+    "mambapy/jamba.py": "37fb6498a402a686df64acc211c7cd80814c269ccc3f7c390a1833b6c2c387c5",
+    "mambapy/lm.py": "95bda8093cde2d614482ecfb74b7c4f2415c6a1e0b931dd6886bee04d7fc8d8b",
+    "mambapy/mamba.py": "1ec78b6dd19d3d7e64caa7d27cf814450981b8efea873a9899a350c444eaeb1f",
+    "mambapy/mamba2.py": "faad15aeac49b1be530bbfdde5e610c1697ebb8d36bb96ff92ed5e938cc7300e",
+    "mambapy/mps/__init__.py": "829d26f5004ddcc1dc3d1195d65714f0dbebada407027b1d23f5a00e30fd8eb7",
+    "mambapy/mps/conv.metal": "3e3fde50da2344ae9d1e62a40c225e3daa7eede2e746cda0000abb58ffc6c52e",
+    "mambapy/mps/conv.py": "9c3e3fe2151b8959c1239c52e5c84b16dd30dd3bc8a4a052087f8b3c53037fdb",
+    "mambapy/mps/scan.metal": "29c101e8410ed8d7acd64800e5534adbcf47efcee04b81ae8ce1474eb60d8a35",
+    "mambapy/mps/scan.py": "629642d80326d300b881cba590aee0582224d2a56f2d104169aa6b28308d5dd4",
+    "mambapy/onnx/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mambapy/onnx/mamba_lm_onnx.py": "8764fb956fb70718a467e8d5ea810ac8323c86073a904221c97b5d2defc0e22d",
+    "mambapy/onnx/mamba_onnx.py": "4d0cfda89e34176af067a4883830f1a9bc04b77e69271b6eed123b27f49ae448",
+    "mambapy/onnx/onnx_convert.py": "70ce94954885e2314fca0d8a009c9db3d62129531af06a0495d5699d58a3445f",
+    "mambapy/onnx/onnx_usage.py": "1561df4c3c6689a0261147c7065f920660945b11df4d9565d23fe5293a3aaac4",
+    "mambapy/pscan.py": "51cd34493a95aa08cdfa5d25465edda7df3e6fa5cec98eb32d22448da2427ebe",
+    "mambapy/scan.py": "cb072e1e88fa79f941493c435c180de883a556ba0b3f7dd8c5483f463eda21fd",
+    "mambapy/vim.py": "0a2feceaf14168fb63f7e218ad049b2158a9253c259f57b71b612fffa51f4101"
+  }
+}

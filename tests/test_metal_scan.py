@@ -44,7 +44,7 @@ def test_invalid_state_rejected():
         forward_raw(*[t.to('mps') for t in data(2,129)])
 
 
-@pytest.mark.parametrize('length,state',[(1,1),(3,3),(3,16),(65,32),(257,64),(2048,16)])
+@pytest.mark.parametrize('length,state',[(1,1),(3,3),(3,16),(65,32),(65,128),(257,64),(2048,16),(8192,16)])
 def test_backward(length,state):
     args = data(length,state)
     ref = [t.double().requires_grad_() for t in args]
@@ -112,3 +112,57 @@ def test_final_state_loss_and_accumulation():
     h.square().sum().backward()
     torch.testing.assert_close(args[0].grad,2*first,rtol=1e-4,atol=1e-5)
     assert args[2].grad is None
+
+
+@pytest.mark.parametrize('length,state',[(1,1),(65,7),(257,128),(512,16),(512,128),(2048,16),(8192,16)])
+def test_inference_specialization(length,state):
+    args=data(length,state)
+    expected=[t.float() for t in reference_scan(*[a.double() for a in args])]
+    with torch.inference_mode():
+        got=scan(*[t.to('mps') for t in args])
+    for a,b in zip(got,expected):
+        torch.testing.assert_close(a.cpu(),b,rtol=1e-4,atol=1e-5)
+
+
+@pytest.mark.parametrize('state',[7,16,32])
+def test_wide_prompt_specialization(state):
+    args=data(512,state,width=512)
+    expected=[t.float() for t in reference_scan(*[a.double() for a in args])]
+    with torch.inference_mode():
+        got=scan(*[t.to('mps') for t in args])
+    for a,b in zip(got,expected):
+        torch.testing.assert_close(a.cpu(),b,rtol=1e-4,atol=1e-5)
+
+
+def test_decay_specialization_boundary():
+    args=data(63,7,width=4)
+    args[1]=torch.ones_like(args[1])
+    args[2]=torch.tensor([-.099999,-.100001,.099999,.100001])[:,None].expand(4,7).clone()
+    ref=[t.double().requires_grad_() for t in args]
+    gpu=[t.to('mps').requires_grad_() for t in args]
+    y,h=scan(*gpu)
+    yr,hr=reference_scan(*ref)
+    for a,b in zip((y,h),(yr,hr)):
+        torch.testing.assert_close(a.cpu(),b.float(),rtol=1e-4,atol=1e-5)
+    grads=torch.autograd.grad(y.sum()+h.sum(),gpu)
+    gold=torch.autograd.grad(yr.sum()+hr.sum(),ref)
+    for a,b in zip(grads,gold):
+        torch.testing.assert_close(a.cpu(),b.float(),rtol=1e-4,atol=1e-5)
+
+
+def test_fake_metadata_for_dense_transposed_inputs():
+    from torch._subclasses.fake_tensor import FakeTensorMode
+    from mambapy.mps.scan import _inference_op, _backward_op
+    from mambapy.mps.conv import _conv_backward
+    args=[t.to('mps').transpose(-1,-2).contiguous().transpose(-1,-2)
+          if t.ndim>1 else t.to('mps') for t in data(7,7)]
+    _,_,states=_scan_op(*args,128)
+    cases=[(_scan_op,(*args,128)),(_inference_op,tuple(args)),
+           (_backward_op,(*args[:6],states,args[0],args[-1],128)),
+           (_conv_backward,(args[0],torch.randn(8,1,4,device='mps'),args[5],args[0][:,:4]))]
+    for op,inputs in cases:
+        real=op(*inputs)
+        with FakeTensorMode() as mode:
+            fake=op(*[mode.from_tensor(t) if isinstance(t,torch.Tensor) else t for t in inputs])
+        for a,b in zip(real,fake):
+            assert (a.shape,a.stride(),a.dtype)==(b.shape,b.stride(),b.dtype)

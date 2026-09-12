@@ -21,7 +21,7 @@ def sync():
     torch.mps.synchronize()
 
 
-def measure(fn, warmup=3, repeats=10):
+def measure(fn, warmup=3, repeats=10, iterations=1):
     sync()
     start = time.perf_counter()
     fn()
@@ -33,9 +33,10 @@ def measure(fn, warmup=3, repeats=10):
     samples = []
     for _ in range(repeats):
         start = time.perf_counter()
-        fn()
+        for _ in range(iterations):
+            fn()
         sync()
-        samples.append((time.perf_counter() - start) * 1000)
+        samples.append((time.perf_counter() - start) * 1000 / iterations)
     ordered = sorted(samples)
     return dict(first_ms=first, median_ms=statistics.median(samples),
                 p95_ms=ordered[min(len(ordered)-1, int(.95*len(ordered)))],

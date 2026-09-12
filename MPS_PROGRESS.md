@@ -67,3 +67,19 @@ Validation: 13 generation/stateful tests passed on CPU and MPS, including greedy
 Added actual half/bfloat Metal buffer variants, with FP32 recurrent states, delta, reductions and gradient accumulation; outputs and input gradients retain their intended dtype. Reference scan and normalization handle mixed precision consistently. Convolution cache inputs follow activation dtype. The existing checkpoint helper now captures and restores autocast settings during backward recomputation, verified by hooks observing projection output dtypes.
 
 Validation: 98 passed, 1 CUDA-only skip. FP16 tolerances are rtol=1e-2/atol=1e-3; BF16 rtol=5e-2/atol=5e-3; FP32 stays rtol=1e-4/atol=1e-5. Tests cover explicit conversion, autocast, optional bias/inner normalization, all model gradients, optimizer steps, cached generation and checkpoint backward outside the autocast context. Autocast AdamW uses FP32 parameters; explicitly low-precision parameters were validated with SGD. The CPU fallback environment flag is unset (PyTorch's default is disabled).
+
+## Step 9 — measured tuning
+
+Reused `F.linear` for the MPS delta projection, eliminating its transposed batched multiplication and subsequent layout copy. Scan output uses SIMD state reductions and 256-thread groups. Short scans skip summary/boundary launches; wide inference uses a recurrent specialization and narrow prompts use temporal tiles. Training uses bounded 64/128-token choices, selected after measuring 64/128/256 in all three precisions. Long inference now uses native convolution; long training retains the faster PyTorch convolution.
+
+An added 8192-token derivative test exposed cancellation in the A gradient. Compensated reductions and a long-sequence forward-sensitivity specialization using pairs of FP32 values resolve it without changing tolerances or clipping. This specialization starts at length 4096. At length 8192, a B=2, width=128 block takes 76.89 ms for forward/backward versus 258.10 ms for the PyTorch path; inference takes 6.43 versus 99.27 ms. Fixed fake output strides for dense transposed inputs, including backward operators.
+
+Validation: **117 passed, 1 CUDA-only skip**, with real MPS required and CPU fallback disabled. Coverage includes long FP16/BF16 gradients and CPU validation of the comparison Transformer's real KV cache.
+
+FP32 small-model results at lengths 512/2048: **7.24x geometric-mean training speedup** and **12.09x prompt speedup** over PyTorch Mamba. Generating 256 tokens after those prompts improves from 18.49/68.01 seconds to 0.273/0.263 seconds. Most of the generation improvement comes from caching: cached PyTorch generation takes 0.345/0.473 seconds. All five PR forward cases meet the 10% gate in two controlled runs. PR comparisons rotate timing order after warming every model to distribute clock/thermal bias.
+
+The 129,135,360-parameter Mamba benchmark ties embedding/head weights only in the benchmark; the library's default remains untied. The matched Transformer has 128,457,216 parameters. At length 2048, FP32 Mamba training/prompt processing takes 669.31/149.50 ms versus 954.47/306.44 ms for the Transformer. The PyTorch Mamba reference exceeds the 16 GiB allocator budget during training at this length; its missing training result is reported as out of budget. It does complete cached generation.
+
+Two 30-second small-model training runs remain stable: first/last-quarter medians are 21.407/21.398 ms (length 512) and 65.732/65.741 ms (length 2048). Sustained-run results are saved separately from the fresh-model speed measurements. Memory sampling is a lower bound, not an exact peak; GPU driver counters and process RSS overlap in unified memory and must not be added as a measured peak.
+
+Raw samples, precision comparisons, memory readings, compilation/pipeline preparation, and dispatch diagnostics are consolidated by `python -m benchmarks.report`. The final benchmark report and reproduction guide accompany packaging in step 10.

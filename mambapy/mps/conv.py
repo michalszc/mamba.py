@@ -49,7 +49,7 @@ def _conv_backward(x: torch.Tensor,w: torch.Tensor,bias: torch.Tensor,gy: torch.
 
 @_conv_backward.register_fake
 def _conv_backward_fake(x,w,bias,gy):
-    return [torch.empty_like(t) for t in (x,w,bias)]
+    return [torch.empty_like(t,memory_format=torch.contiguous_format) for t in (x,w,bias)]
 
 
 def _setup(ctx,inputs,output):
@@ -77,4 +77,5 @@ def conv_silu(x,weight,bias=None,history=None):
 
 def eligible(x,config):
     return (x.device.type=='mps' and x.dtype in (torch.float32,torch.float16,torch.bfloat16) and config.backend!='torch'
-            and config.pscan and not config.use_cuda and 0<x.size(1)<=128)
+            and config.pscan and not config.use_cuda and x.size(1)>0
+            and (x.size(1)<=128 or not torch.is_grad_enabled()))

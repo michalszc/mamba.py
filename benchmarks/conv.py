@@ -16,7 +16,7 @@ def main():
         for native in (False,True):
             with patch('mambapy.mps.conv.eligible',return_value=native):
                 with torch.inference_mode():
-                    row[str(native)+'_forward']=measure(lambda:model(x))['median_ms']
+                    row[str(native)+'_forward']=measure(lambda:model(x),iterations=5)['median_ms']
                 def backward():
                     model.zero_grad(set_to_none=True)
                     model(x).square().mean().backward()

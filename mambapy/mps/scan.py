@@ -3,12 +3,14 @@ from pathlib import Path
 
 import torch
 
+OUTPUT_GROUP_SIZE = 256
 
-@lru_cache(maxsize=24)
-def shaders(capacity,dtype=torch.float32):
+
+@lru_cache(maxsize=72)
+def shaders(capacity,dtype=torch.float32,chunk_size=128):
     source = Path(__file__).with_suffix('.metal').read_text()
     scalar={torch.float32:'float',torch.float16:'half',torch.bfloat16:'bfloat'}[dtype]
-    return torch.mps.compile_shader(source.replace('STATE_CAPACITY', str(capacity)).replace('SCALAR_TYPE',scalar))
+    return torch.mps.compile_shader(source.replace('STATE_CAPACITY', str(capacity)).replace('SCALAR_TYPE',scalar).replace('CHUNK_CAPACITY',str(chunk_size)))
 
 
 def validate(x, delta, A, B, C, D, initial_state):
@@ -40,18 +42,21 @@ def forward_raw(x, delta, A, B, C, D, initial_state, chunk_size=128):
     batch,length,width = x.shape
     state = A.size(1)
     chunks = (length+chunk_size-1)//chunk_size
-    lib = shaders(1 << (state-1).bit_length(),x.dtype)
-    alpha = A.new_empty(batch,chunks,width,state)
-    beta = torch.empty_like(alpha)
+    capacity=1 << (state-1).bit_length()
+    lib = shaders(capacity,x.dtype,chunk_size)
     states = A.new_empty(batch,chunks+1,width,state)
     y = torch.empty_like(x)
-    lib.summaries(x,delta,A,B,alpha,beta,length,width,state,chunks,chunk_size,
-                  threads=alpha.numel())
-    lib.boundaries(alpha,beta,initial_state,states,width,state,chunks,
-                   threads=batch*width*state)
-    lib.output_scan(x,delta,A,B,C,D,states,y,length,width,state,chunks,chunk_size,
-                    threads=batch*chunks*width)
-    return y, states[:,-1].clone(), states
+    last=torch.empty_like(initial_state)
+    if chunks>1:
+        alpha = A.new_empty(batch,chunks,width,state)
+        beta = torch.empty_like(alpha)
+        lib.summaries(x,delta,A,B,alpha,beta,length,width,state,chunks,chunk_size,
+                      threads=alpha.numel())
+        lib.boundaries(alpha,beta,initial_state,states,width,state,chunks,
+                       threads=batch*width*state)
+    lib.output_scan(x,delta,A,B,C,D,states,y,initial_state,last,length,width,state,chunks,chunk_size,
+                    threads=batch*chunks*width*min(capacity,32),group_size=OUTPUT_GROUP_SIZE)
+    return y, last, states
 
 
 def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
@@ -59,7 +64,7 @@ def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
     batch,length,width = x.shape
     state = A.size(1)
     chunks = states.size(1)-1
-    lib = shaders(1 << (state-1).bit_length(),x.dtype)
+    lib = shaders(1 << (state-1).bit_length(),x.dtype,chunk_size)
     alpha = A.new_empty(batch,chunks,width,state)
     beta = torch.empty_like(alpha)
     adjoints = torch.empty_like(states)
@@ -74,7 +79,12 @@ def backward_raw(x, delta, A, B, C, D, states, gy, gh, chunk_size):
     lib.scan_gradients(x,delta,A,B,C,states,adjoints,gy,gx,gdt,gA,gB,gC,
                        length,width,state,chunks,chunk_size,
                        threads=batch*chunks*width*(1 << (state-1).bit_length()))
-    return gx.to(x.dtype),gdt,gA.sum((0,1)),gB.to(B.dtype),gC.to(C.dtype),(gy*x.float()).sum((0,1)),adjoints[:,0].clone()
+    ga=torch.empty_like(A)
+    if length>=4096:
+        lib.long_A_gradient(x,delta,A,B,C,states,gy,gh,ga,length,width,state,chunks,batch,threads=ga.numel())
+    else:
+        lib.reduce_A(gA,ga,width*state,batch*chunks,threads=ga.numel())
+    return gx.to(x.dtype),gdt,ga,gB.to(B.dtype),gC.to(C.dtype),(gy*x.float()).sum((0,1)),adjoints[:,0].clone()
 
 
 @torch.library.custom_op('mambapy_mps::scan_backward', mutates_args=())
@@ -87,7 +97,7 @@ def _backward_op(x: torch.Tensor, delta: torch.Tensor, A: torch.Tensor,
 
 @_backward_op.register_fake
 def _backward_fake(x,delta,A,B,C,D,states,gy,gh,chunk_size):
-    return [torch.empty_like(t) for t in (x,delta,A,B,C,D,gh)]
+    return [torch.empty_like(t,memory_format=torch.contiguous_format) for t in (x,delta,A,B,C,D,gh)]
 
 
 @torch.library.custom_op('mambapy_mps::scan', mutates_args=())
@@ -100,7 +110,8 @@ def _scan_op(x: torch.Tensor, delta: torch.Tensor, A: torch.Tensor,
 @_scan_op.register_fake
 def _scan_fake(x,delta,A,B,C,D,initial_state,chunk_size):
     chunks = (x.size(1)+chunk_size-1)//chunk_size
-    return (torch.empty_like(x),torch.empty_like(initial_state),
+    return (torch.empty_like(x,memory_format=torch.contiguous_format),
+            torch.empty_like(initial_state,memory_format=torch.contiguous_format),
             A.new_empty(x.size(0),chunks+1,x.size(2),A.size(1)))
 
 
@@ -123,8 +134,49 @@ def _backward(ctx,gy,gh,_):
 _scan_op.register_autograd(_backward,setup_context=_setup_context)
 
 
-def scan(x,delta,A,B,C,D,initial_state=None,chunk_size=128):
+def select_chunk(length,width,dtype):
+    # Bounded M4 Pro tuning: short sequences use one launch; 64-token tiles
+    # lower backward register pressure for wide or long sequences.
+    if length<=128:
+        return 128
+    if length>=4096:
+        return 128
+    return 64 if length>=1024 or width>=512 else 128
+
+
+@torch.library.custom_op('mambapy_mps::scan_inference',mutates_args=())
+def _inference_op(x: torch.Tensor,delta: torch.Tensor,A: torch.Tensor,B: torch.Tensor,
+                  C: torch.Tensor,D: torch.Tensor,initial_state: torch.Tensor) -> tuple[torch.Tensor,torch.Tensor]:
+    # Narrow prompt workloads gain temporal parallelism from tiling. Wide
+    # workloads already fill the GPU and benefit from the single-launch scan.
+    if x.size(1)>128 and x.size(2)<512:
+        return forward_raw(x,delta,A,B,C,D,initial_state,64 if x.size(1)>=1024 else 128)[:2]
+    validate(x,delta,A,B,C,D,initial_state)
+    x,delta,A,B,C,D,initial_state=[t.contiguous() for t in (x,delta,A,B,C,D,initial_state)]
+    batch,length,width=x.shape
+    state=A.size(1)
+    capacity=1 << (state-1).bit_length()
+    states=A.new_empty(batch,2,width,state)
+    y=torch.empty_like(x)
+    last=torch.empty_like(initial_state)
+    shaders(capacity,x.dtype,128).output_scan(x,delta,A,B,C,D,states,y,initial_state,last,
+                                            length,width,state,1,length,
+                                            threads=batch*width*min(capacity,32),group_size=OUTPUT_GROUP_SIZE)
+    return y,last
+
+
+@_inference_op.register_fake
+def _inference_fake(x,delta,A,B,C,D,initial_state):
+    return (torch.empty_like(x,memory_format=torch.contiguous_format),
+            torch.empty_like(initial_state,memory_format=torch.contiguous_format))
+
+
+def scan(x,delta,A,B,C,D,initial_state=None,chunk_size=None):
+    if chunk_size is None:
+        chunk_size=select_chunk(x.size(1),x.size(2),x.dtype)
     if initial_state is None:
         initial_state = x.new_zeros(x.size(0),x.size(2),A.size(1),dtype=torch.float32)
+    if not torch.is_grad_enabled():
+        return _inference_op(x,delta.float(),A.float(),B.to(x.dtype),C.to(x.dtype),D.float(),initial_state.float())
     y,h,_ = _scan_op(x,delta.float(),A.float(),B.to(x.dtype),C.to(x.dtype),D.float(),initial_state.float(),chunk_size)
     return y,h

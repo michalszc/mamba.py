@@ -12,10 +12,11 @@ TOL={torch.float16:dict(rtol=1e-2,atol=1e-3),torch.bfloat16:dict(rtol=5e-2,atol=
 
 
 @pytest.mark.parametrize('dtype',[torch.float16,torch.bfloat16])
-def test_scan_dtype_and_gradients(dtype):
+@pytest.mark.parametrize('length',[65,8192])
+def test_scan_dtype_and_gradients(dtype,length):
     torch.manual_seed(41)
-    args=[torch.randn(2,65,8,dtype=dtype),torch.rand(2,65,8)*.1,
-          -torch.rand(8,7),torch.randn(2,65,7,dtype=dtype),torch.randn(2,65,7,dtype=dtype),
+    args=[torch.randn(2,length,8,dtype=dtype),torch.rand(2,length,8)*.1,
+          -torch.rand(8,7),torch.randn(2,length,7,dtype=dtype),torch.randn(2,length,7,dtype=dtype),
           torch.randn(8),torch.randn(2,8,7)]
     gpu=[t.to('mps').requires_grad_() for t in args]
     ref=[t.double().requires_grad_() for t in args]
