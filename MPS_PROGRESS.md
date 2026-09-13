@@ -101,3 +101,13 @@ The default 73,920-parameter, two-layer run completed 100 updates. Upstream refe
 Audits compare logits and every gradient with the upstream CPU reference. Optimizer correctness uses identical supplied gradients on CPU/MPS; cross-device updates with independently calculated gradients remain visible as diagnostics because AdamW amplifies near-zero derivative roundoff. Four regressions cover dataset split/window integrity, deterministic batches, source checksums, and detection of absent/incorrect/nonfinite gradients even with matching logits.
 
 Validation: **123 passed, 1 CUDA-only skip**, requiring real MPS with CPU fallback disabled. The short execution check and complete default real-text run both completed; PR correctness failures were captured as expected. Saved measurements are in `benchmarks/results/real-text-m4-pro.json` and usage instructions in `docs/REAL_TEXT_BENCHMARK.md`.
+
+## Follow-up — ECG200 classification from scratch
+
+Added `benchmarks.ecg200` using only this fork. The user's LayerNorm/Mamba/Dropout/residual block wraps the existing bare mixer; two blocks with width 256, state size 64, convolution width 4, expansion 2 and dropout 0.1 feed mean pooling and an MLP classifier. There are 1,057,666 trainable parameters and no pretrained weights.
+
+Downloaded and checksum-pinned the real ECG200 archive. A fixed stratified split reserves 20 of the official 100 training examples for validation; normalization is fitted on the remaining 80 only. The 100 official test examples do not select epochs or settings. Three predefined seeds train with AdamW, with early stopping on validation loss and no gradient clipping.
+
+Seeds 2026/2027/2028 select epochs 53/27/31 and score 86%/80%/83% test accuracy. Mean accuracy is 83% with 3 percentage-point sample standard deviation; mean balanced accuracy is 82.47%. The training-majority test baseline is 64%. Median full training-update times are 16.142/16.065/16.118 ms for batch 16. All initial/final numerical audits against this fork's CPU path pass, every update has finite gradients for every parameter, all parameter tensors change, and saved checkpoints reload with matching logits. Validation loss becomes unstable in later epochs on this small dataset; no settings were adjusted based on the test outcomes.
+
+Validation: **128 passed, 1 CUDA-only skip**, with real MPS required and CPU fallback disabled. No packages were installed. Instructions are in `docs/ECG200_CLASSIFICATION.md`, measured results in `benchmarks/results/ecg200-m4-pro.json`, and the three local checkpoints in ignored `benchmark-results/ecg200-checkpoints/`.

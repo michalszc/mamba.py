@@ -1,6 +1,7 @@
 include MPS_PROGRESS.md requirements-dev.txt
 include docs/MPS.md docs/MPS_BENCHMARKS.md
 include docs/REAL_TEXT_BENCHMARK.md
+include docs/ECG200_CLASSIFICATION.md
 recursive-include mambapy/mps *.metal
 recursive-include benchmarks *.py *.json
 recursive-include tests test_*.py

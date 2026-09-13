@@ -6,6 +6,8 @@ These are synthetic compute benchmarks, not measurements of trained model qualit
 
 For actual text training and gradient checks against state-spaces and PR #78, see the separate [Tiny Shakespeare benchmark](REAL_TEXT_BENCHMARK.md).
 
+For from-scratch sequence classification using only this fork, see the [ECG200 Mamba classifier](ECG200_CLASSIFICATION.md).
+
 ## Models and timing
 
 | Model class | Layers | Width | State size | Vocabulary | Mamba parameters | Transformer parameters |
