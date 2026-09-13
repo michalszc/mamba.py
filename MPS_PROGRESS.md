@@ -83,3 +83,11 @@ The 129,135,360-parameter Mamba benchmark ties embedding/head weights only in th
 Two 30-second small-model training runs remain stable: first/last-quarter medians are 21.407/21.398 ms (length 512) and 65.732/65.741 ms (length 2048). Sustained-run results are saved separately from the fresh-model speed measurements. Memory sampling is a lower bound, not an exact peak; GPU driver counters and process RSS overlap in unified memory and must not be added as a measured peak.
 
 Raw samples, precision comparisons, memory readings, compilation/pipeline preparation, and dispatch diagnostics are consolidated by `python -m benchmarks.report`. The final benchmark report and reproduction guide accompany packaging in step 10.
+
+## Step 10 — packaging and documentation
+
+Packaged both Metal sources in the wheel and source distribution, using the fork-local version `1.2.0+mps`. Metadata records Python >=3.10, PyTorch >=2.11.0, and einops >=0.8.1. CPU forward and chunk execution now avoid importing the Metal convolution implementation. No dependencies were installed or upgraded.
+
+Added usage, precision, checkpointing, generation, installation, benchmark reproduction, and limitation guides. The measured tables distinguish native kernels from caching improvements, record the 130M reference training memory limit, and explicitly identify unmeasured full-history 130M generation and full-model FP16 performance. Mamba-2, Jamba, Vision Mamba, accelerated HF integration, higher-order derivatives, and full compile optimization remain follow-on work.
+
+Final validation: **119 passed, 1 CUDA-only skip**, with real MPS required and CPU fallback disabled. Distribution tests build and inspect both archives, then run CPU and MPS training/generation from an unpacked wheel outside the checkout. The CPU test rejects any Metal compilation and verifies that backend modules stay unloaded. All three Python examples in the MPS usage guide executed successfully. The final diff passed whitespace checks.

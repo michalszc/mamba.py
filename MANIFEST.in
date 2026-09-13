@@ -1,0 +1,5 @@
+include MPS_PROGRESS.md requirements-dev.txt
+include docs/MPS.md docs/MPS_BENCHMARKS.md
+recursive-include mambapy/mps *.metal
+recursive-include benchmarks *.py *.json
+recursive-include tests test_*.py

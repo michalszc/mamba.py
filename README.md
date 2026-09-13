@@ -2,6 +2,23 @@
 A straightfoward implementation of [Mamba](https://arxiv.org/abs/2312.00752) in PyTorch with a simple parallel scan implementation, offering an major speedup over a sequential implementation, as the parallel scan allows the parallelization over the time dimension.
 It combines the ease of read with good performances when training. Few other functionalities are implemented, like [Jamba](https://www.ai21.com/blog/announcing-jamba), [Vision Mamba](https://arxiv.org/abs/2401.09417) as well as [muP](https://arxiv.org/abs/2203.03466).
 
+## Apple Silicon backend in this fork
+
+This fork adds a Metal backend for **Mamba-1 training, prompt processing, and cached generation**, using PyTorch 2.11. It supports FP32, FP16, and BF16 with FP32 recurrent states. CPU execution stays in PyTorch and loads no Metal backend.
+
+On an M4 Pro with 24 GiB, the six-layer benchmark achieves **7.24x faster training** and **12.09x faster prompt processing** than the PyTorch Mamba path across lengths 512 and 2048. The matched Transformer is faster on some workloads. FP32 is the fastest measured Mamba decoding precision on this machine.
+
+See the [MPS usage guide](docs/MPS.md) and [measured results and reproduction commands](docs/MPS_BENCHMARKS.md). Install this fork from source; the upstream PyPI package does not contain these changes. The historical HF integration below uses the public `pscan` primitive and does **not** automatically use this new backend. Mamba-2, Jamba, Vision Mamba, and accelerated HF integration are follow-on work.
+
+```python
+import torch
+from mambapy.mamba import Mamba, MambaConfig
+
+model = Mamba(MambaConfig(d_model=128, n_layers=2, backend="mps")).to("mps")
+x = torch.randn(2, 512, 128, device="mps")
+model(x).square().mean().backward()
+```
+
 ## Updates
 - <b>03/08/2024</b> : Added a muP implementation for Mamba and Mamba2. This allows to sweep for optimal hyperparameters on a small model and directly transfer them to a large model. See [this PR](https://github.com/alxndrTL/mamba.py/pull/50)
 - <b>23/07/2024</b> : `mamba.py` is now part of the transformers 🤗 library. See [this PR](https://github.com/huggingface/transformers/pull/30139).

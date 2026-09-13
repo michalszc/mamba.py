@@ -281,8 +281,11 @@ class MambaBlock(nn.Module):
         x, z = xz.chunk(2, dim=-1) # (B, L, ED), (B, L, ED)
 
         # x branch
-        from mambapy.mps.conv import eligible, conv_silu
-        if eligible(x,self.config):
+        use_native_conv = False
+        if x.device.type == 'mps':
+            from mambapy.mps.conv import eligible, conv_silu
+            use_native_conv = eligible(x,self.config)
+        if use_native_conv:
             x = conv_silu(x,self.conv1d.weight,self.conv1d.bias)
         else:
             x = F.silu(self.conv1d(x.transpose(1,2))[:,:,:L].transpose(1,2))
@@ -493,8 +496,11 @@ class MambaBlock(nn.Module):
         inputs = inputs.to(x_pre.dtype)
 
         k = max(self.config.d_conv - 1, 0)
-        from mambapy.mps.conv import eligible,conv_silu
-        if eligible(x_pre,self.config):
+        use_native_conv = False
+        if x_pre.device.type == 'mps':
+            from mambapy.mps.conv import eligible,conv_silu
+            use_native_conv = eligible(x_pre,self.config)
+        if use_native_conv:
             x_act = conv_silu(x_pre,self.conv1d.weight,self.conv1d.bias,inputs)
         elif k > 0:
             x_cat = torch.cat([inputs, x_pre.transpose(1, 2)], dim=2) # (B, ED, k+L)
