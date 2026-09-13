@@ -11,6 +11,20 @@ import torch
 from mambapy.mamba import Mamba,MambaConfig
 
 
+def load_pr78(root):
+    """Load the separately built audit checkout without installing it."""
+    root = Path(root).resolve()
+    sys.path.insert(0, str(root / 'pr78-build'))
+    spec = importlib.util.spec_from_file_location(
+        'audited_pr78', root / 'pr78-review/mambapy/mamba.py')
+    pr = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = pr
+    spec.loader.exec_module(pr)
+    if not (pr._USE_METAL_SSM and pr._USE_METAL_CONV):
+        raise RuntimeError('PR #78 Metal extension is unavailable; refusing a silent PyTorch baseline')
+    return pr
+
+
 def compare(models,x,warmup=25,repeats=15,iterations=5):
     """Warm every model, then rotate order to distribute clock/thermal bias."""
     first={}
@@ -46,12 +60,7 @@ def main():
     assert torch.backends.mps.is_available()
     pr=None
     if args.pr_root:
-        sys.path.insert(0,str(args.pr_root/'pr78-build'))
-        spec=importlib.util.spec_from_file_location('audited_pr78',args.pr_root/'pr78-review/mambapy/mamba.py')
-        pr=importlib.util.module_from_spec(spec)
-        sys.modules[spec.name]=pr
-        spec.loader.exec_module(pr)
-        assert pr._USE_METAL_SSM and pr._USE_METAL_CONV
+        pr=load_pr78(args.pr_root)
     rows=[]
     for batch,length,width in ((2,64,128),(2,512,128),(2,2048,128),(2,512,384),(1,2048,384)):
         torch.manual_seed(72)

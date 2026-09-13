@@ -4,6 +4,8 @@ Measured with PyTorch 2.11.0, Python 3.12.11, macOS 26.6.2, and an M4 Pro with 2
 
 These are synthetic compute benchmarks, not measurements of trained model quality. All runs use initialized weights and random token tensors, without pretrained downloads or tokenization. GPU benchmarks run sequentially, with CPU fallback disabled.
 
+For actual text training and gradient checks against state-spaces and PR #78, see the separate [Tiny Shakespeare benchmark](REAL_TEXT_BENCHMARK.md).
+
 ## Models and timing
 
 | Model class | Layers | Width | State size | Vocabulary | Mamba parameters | Transformer parameters |
